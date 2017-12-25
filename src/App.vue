@@ -1,0 +1,615 @@
+<template>
+  <div class="fullScreen">
+      
+    <pay-table></pay-table>
+    <logo></logo>
+    <menu-btns v-on:openInfo="openInfoBox"></menu-btns>
+    <info v-on:closeInfo="infoBoxOpen = false" :open="infoBoxOpen" ></info>
+
+    <div></div>
+
+    <cash-display v-bind:baseBet="cash.baseBet" v-bind:MDBet="cash.MDBet" v-bind:bal="cash.balance" v-bind:win="cash.win" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
+
+    <div id="mainCards" class="cardArea">
+      <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:multiplyNum="getNumPayMultiply()"></main-cards>
+    </div>
+
+  <!--   <div id="bonusCards" class="cardArea" v-for="(showCard,index) in showBonusCard" :class="[getTopShift(index)]">
+      <div class="mainCards">
+        <transition name="cardAnimation">
+          <div v-if="showBonusCard[index]" :class="[defaultClasses, cPos[MDIndex], bonusFlip[index] ? 'flip' : '' ]" v-flip="bCards[index]">
+          </div>
+        </transition>
+
+        <div v-if="showBonusCard[index] && stage.results" style="position: absolute; width: 56%;" :class="[labelPos[MDIndex]]">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 20">
+            <rect :fill="finalResults[index].fill" style="stroke:#bababa; stroke-miterlimit:10;" x="30" y="6" rx="2" width="89" height="10" />
+            <text v-if="finalResults[index].rank > 0" class="payTableText" text-anchor="left" font-weight="bold" font-size="6" x="33" y="13.5" fill="#ffffff">
+              {{finalResults[index].label}}</text>
+            <text v-if="finalResults[index].rank === 0" class="payTableText" text-anchor="middle" font-weight="bold" font-size="7" x="74" y="13.5" fill="#ffffff">
+              {{finalResults[index].label}}</text>
+            <text v-if="finalResults[index].rank > 0" class="labelCash payTableText" text-anchor="end" font-weight="bold" font-size="7" x="116" y="13.5" fill="#02F53A">
+              {{dollarFormat(finalResults[index].reward)}}
+            </text>
+          </svg>
+        </div>
+      </div>
+    </div> -->
+
+    <div id="singleResult" class="singleResult" v-if="stage.results">
+
+      <div style="position:absolute; left: 14.8%; width: 60%;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 60">
+          <rect :fill="finalResults[0].fill" style="stroke:#bababa; stroke-miterlimit:10;" x="30" y="25" rx="2" width="105" height="10" />
+          <text v-if="finalResults[0].rank > 0" class="payTableText" text-anchor="start" font-weight="bold" font-size="7" x="33" y="32.5" fill="#ffffff">
+            {{finalResults[0].label}}</text>
+          <text v-if="finalResults[0].rank === 0" class="payTableText" text-anchor="middle" font-weight="bold" font-size="8" x="82" y="32.5" fill="#ffffff">
+            {{finalResults[0].label}}</text>
+          <text v-if="finalResults[0].rank > 0" class="labelCash payTableText" text-anchor="end" font-weight="bold" font-size="7" x="130" y="32.5" fill="#02F53A">
+            {{dollarFormat(finalResults[0].reward)}}</text>
+        </svg>
+      </div>
+    </div>
+
+    <div id="holdButtons" class="cardArea">
+      <div class="mainCards">
+        <div v-for="(hold,i) in holds" class="cSize" :class="hold.class" @click="updateHold(i)">
+          <div style="padding-top:42%; margin:0 auto; text-align:center; cursor:pointer;" v-if="hold.active">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30">
+              <rect style="fill:#FFE401; stroke:#BB2601; stroke-width:3;" x="20" y="5" rx="5" width="60" height="20" />
+              <text text-anchor="middle" font-weight="900" font-size="15" x="50" y="20.5" fill="#000000" opacity="1">
+                HELD</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btnHeight" v-if="stage.newRound || stage.results">
+      <div class="btnBase" v-on:click="deal">
+        <btn-right-deal></btn-right-deal>
+      </div>
+    </div>
+
+    <div class="btnHeight" v-if="stage.mainCardsDealt && !stage.removeUnheldCards">
+      <div class="btnBase" v-on:click="draw">
+        <btn-right-draw></btn-right-draw>
+      </div>
+
+    </div>
+
+    <!--     <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
+            <span v-if="option.autohold">☑</span>
+            <span v-if="!option.autohold">☐</span>
+            Auto hold
+            <span v-if="!option.autohold"> is OFF</span>
+            <span v-if="option.autohold"> is ON</span>
+          </button>
+          <div v-if="holdReason !== ''" style="position:absolute; bottom:0.5%; left: 10.5rem; font-size:1rem; cursor: pointer; color: lightyellow; background:  rgba(0, 0, 0, 0.5); padding: 0.5rem; padding-bottom: 0rem; ">
+            <b>Hold reason: </b>
+            {{holdReason}}
+
+          </div> -->
+<transition name="fade">
+          <water-mark v-if="stage.removeUnheldCards === false"></water-mark>
+</transition>
+    <div style="display:none;">
+      <audio id="soundFlip">
+        <source src="/static/sounds/cardFlip.mp3" type="audio/mpeg">
+      </audio>
+      <audio id="soundLabel">
+        <source src="/static/sounds/msmh_wand.mp3" type="audio/mpeg"> Your browser does not support the audio element.
+      </audio>
+      <audio id="dSoundDeal">
+        <source src="/static/sounds/cardFlip2.mp3" type="audio/mpeg">
+      </audio>
+      <audio id="soundClearCards">
+        <source src="/static/sounds/mp_deal.mp3" type="audio/mpeg">
+      </audio>
+      <audio id="playerWins">
+        <source src="/static/sounds/m_multiCashOut.mp3" type="audio/mpeg">
+      </audio>
+      <audio id="soundBtnPress">
+        <source src="/static/sounds/mk_ballLaunch.mp3" type="audio/mpeg">
+      </audio>
+      <audio id="chipClick">
+        <source src="/static/sounds/chipClick.mp3" type="audio/mpeg">
+      </audio>
+      <audio id="endRound">
+        <source src="/static/sounds/playerWins.mp3" type="audio/mpeg">
+      </audio>
+
+      <img src="./assets/cards/AC.svg">
+      <img src="./assets/cards/JC.svg">
+      <img src="./assets/cards/JD.svg">
+      <img src="./assets/cards/JH.svg">
+      <img src="./assets/cards/JS.svg">
+      <img src="./assets/cards/KC.svg">
+      <img src="./assets/cards/KD.svg">
+      <img src="./assets/cards/KH.svg">
+      <img src="./assets/cards/KS.svg">
+      <img src="./assets/cards/QC.svg">
+      <img src="./assets/cards/QD.svg">
+      <img src="./assets/cards/QH.svg">
+      <img src="./assets/cards/QS.svg">
+      <img src="./assets/cards/cardBack2.svg">
+
+    </div>
+
+  </div>
+</template>
+
+<script>
+import bus from "./bus";
+import logo from "./components/logo";
+import waterMark from "./components/waterMark";
+import menuBtns from "./components/menuBtns";
+import cashDisplay from "./components/cashDisplay";
+import btnRightDeal from "./components/btnRightDeal";
+import btnRightDraw from "./components/btnRightDraw";
+import btnLeftBet from "./components/btnLeftBet";
+import mainCards from "./components/cards";
+import bonusCards from "./components/bonusCards";
+import payTable from "./components/payTable";
+import dealerPerson from "./gameLogic/dealer";
+import handResult from "./gameLogic/handResult";
+import autoHolder from "./gameLogic/autoHolder";
+import info from "./components/info";
+
+var finalResults = new handResult();
+var getHolds = new autoHolder();
+
+var dealer = new dealerPerson(),
+  cardPos = ["c1Pos", "c2Pos", "c3Pos", "c4Pos", "c5Pos"],
+  cardHolds = cardPos.map(a => {
+    return {
+      class: a,
+      active: false
+    };
+  });
+
+
+export default {
+  name: "app",
+  components: {
+    menuBtns,
+    logo,
+    waterMark,
+    cashDisplay,
+    btnRightDeal,
+    btnLeftBet,
+    mainCards,
+    btnRightDraw,
+    bonusCards,
+    payTable,
+    info
+  },
+  data() {
+    return {
+      infoBoxOpen: false,
+      stage: {
+        newRound: true,
+        mainCardsDealt: false,
+        removeUnheldCards: false,
+        cardSwapComplete: false,
+        draw: false,
+        results: false
+      },
+     /*  MDIndex: -1, */
+      cash: {
+        balance: 1000000,
+        totalBet: 0,
+        baseBet: 0,
+        MDBet: 0,
+        betWin: 100,
+        win: 0,
+        coinValue: 10,
+        MD_coin_cost: 5,
+        base_coin_cost: 5
+      },
+      option: {
+        autohold: false,
+        autoplay: false
+      },
+      holdReason: "",
+      defaultClasses: "cSize flip-container",
+      topShiftClass: ["bCard1", "bCard2", "bCard3", "bCard4", "bCard5"],
+      mCards: dealer.mainCards,
+    //  bCards: dealer.bonusCards, //to fix!!!
+      showMainCard: [false, false, false, false, false],
+      showBonusCard: [false, false, false, false, false],
+      mainFlip: [false, false, false, false, false],
+      bonusFlip: [false, false, false, false, false],
+      cPos: cardPos,
+      labelPos: ["label1", "label2", "label3", "label4", "label5"],
+      holds: cardHolds,
+      finalResults: []
+    };
+  },
+  methods: {
+    openInfoBox() {
+      this.infoBoxOpen = true;
+      document.getElementById("infoFrame").style.zIndex = "1";
+    },
+    dollarFormat(x) {
+      if (x === "") {
+        return x;
+      }
+      return "$" + x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    getTopShift(i) {
+      return this.topShiftClass[i];
+    },
+/*     getNumBonusCards() {
+      return dealer.numBonusCards;
+    }, */
+    getNumPayMultiply() {
+      return dealer.numPayMultiply;
+    },
+    getHeldCards() {
+      return this.holds.map(c => {
+        return c.active;
+      });
+    },
+    deal() {
+      if (this.stage.results) {
+        this.reset();
+        /*        this.stage.newRound = false;
+               this.stage.results = false; */
+        this.playBtnSound();
+
+        setTimeout(() => {
+          this.prepDeckAndShowMainCards();
+        }, 900);
+      } else {
+        this.prepDeckAndShowMainCards();
+      }
+    },
+    prepDeckAndShowMainCards() {
+      dealer.newDeck();
+      this.stage.newRound = false;
+      this.cash.totalBet =
+        this.cash.coinValue *
+        (this.cash.base_coin_cost + this.cash.MD_coin_cost);
+
+      this.cash.balance = this.cash.balance - this.cash.totalBet;
+
+      for (let i = 0; i < this.showMainCard.length; i++) {
+        setTimeout(() => {
+          this.showMainCard.splice(i, 1, true);
+          this.playDealSound();
+          if (i === this.showMainCard.length - 1) {
+            this.flipMainCards(300, [0, 1, 2, 3, 4], false);
+          }
+        }, i * 200);
+      }
+    },
+    swapUnheldCards() {
+      var cardsRemoved = 0,
+        totalRemove = 0,
+        removedCardsIndex = [];
+      this.holds.forEach((held, i, a) => {
+        if (i === 0) {
+          a.forEach(a => {
+            if (!a.active) {
+              totalRemove++;
+            }
+          });
+          if (totalRemove === 0) {
+            this.completeGameRound();
+          }
+        }
+        //  console.log(totalRemove);
+        if (!held.active) {
+          cardsRemoved++;
+          setTimeout(() => {
+            this.showMainCard.splice(i, 1, false);
+
+            dealer.swapCard(i);
+            this.playDealSound();
+            setTimeout(() => {
+              this.mainFlip.splice(i, 1, false);
+            }, 100);
+          }, 200 * cardsRemoved);
+          removedCardsIndex.push(i);
+        }
+      });
+
+      setTimeout(() => {
+        removedCardsIndex.forEach((cardIndexNum, i, a) => {
+          setTimeout(() => {
+            this.showMainCard.splice(cardIndexNum, 1, true);
+            this.playDealSound();
+            if (i === a.length - 1) {
+              this.flipMainCards(300, a, this.stage.cardSwapComplete);
+            }
+          }, i * 200);
+        });
+      }, 200 * totalRemove + 500);
+
+      this.stage.cardSwapComplete = true;
+    },
+   /*  dealBonusCards() {
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          if (i < dealer.numBonusCards) {
+            this.showBonusCard.splice(i, 1, true);
+            this.playDealSound();
+          } else {
+            this.showBonusCard.splice(i, 1, false);
+          }
+        }, i * 600);
+
+        setTimeout(() => {
+          if (i < dealer.numBonusCards) {
+            this.bonusFlip.splice(i, 1, true);
+            this.playDealSound();
+          }
+          if (i === dealer.numBonusCards - 1) {
+            setTimeout(() => {
+              this.stage.results = true;
+            }, 600);
+            this.getResults();
+          }
+        }, i * 600 + 300);
+      }
+    }, */
+    getResults() {
+      //console.log(this.mCards, this.bCards, 'got here!!');
+      this.finalResults = [];
+      var cardCombos = [];
+      this.finalResults.push(finalResults.fiveCards(this.mCards));
+     /*  if (this.MDIndex === -1) {
+        this.finalResults.push(finalResults.fiveCards(this.mCards));
+      } else {
+        this.bCards.forEach(c => {
+          if (c !== "") {
+            var cardCombo = [];
+            this.mCards.forEach(m => {
+              if (m === "MD") {
+                cardCombo.push(c);
+              } else {
+                cardCombo.push(m);
+              }
+            });
+            this.finalResults.push(finalResults.fiveCards(cardCombo));
+          }
+        });
+      } */
+
+      this.analyzeCash();
+    },
+    analyzeCash() {
+      this.cash.win = 0;
+      this.finalResults.forEach(d => {
+        d.reward =
+          this.cash.coinValue *
+          this.cash.base_coin_cost *
+          d.payout * 1 ;  //numPayMultiply goes here.
+         /*  (this.MDIndex > -1 ? dealer.numPayMultiply : 1); */
+        this.cash.win = this.cash.win + d.reward;
+      });
+      // console.log(this.cash.win);
+
+      this.cash.balance = this.cash.balance + this.cash.win;
+
+      /*   console.log(this.finalResults, this.cash.win); */
+    },
+    draw() {
+      this.stage.removeUnheldCards = true;
+      this.swapUnheldCards();
+    },
+    updateHold(i) {
+      if (this.stage.mainCardsDealt && !this.stage.removeUnheldCards) {
+        this.holds[i].active = !this.holds[i].active;
+        this.playBtnSound();
+      }
+    },
+    reset() {
+      this.soundClearCards.play();
+
+      dealer.newDeck();
+
+      this.stage.mainCardsDealt = false;
+      this.stage.removeUnheldCards = false;
+      this.stage.newRound = false;
+      this.stage.draw = false;
+      this.stage.results = false;
+      this.stage.cardSwapComplete = false;
+      this.holdReason = "";
+
+      for (var i = 0; i < 5; i++) {
+        this.mCards.splice(i, 1, "");
+     /*    this.bCards.splice(i, 1, ""); */
+        this.showBonusCard.splice(i, 1, false);
+        this.mainFlip.splice(i, 1, false);
+        this.bonusFlip.splice(i, 1, false);
+        this.showMainCard.splice(i, 1, false);
+        this.holds[i].active = false;
+      }
+    },
+    flipMainCards(initialDelay, cards, swapComplete) {
+      _.forEach(cards, (c, i) => {
+        if (this.mCards[c] === "") {
+          dealer.getCard(c, "main");
+        }
+        setTimeout(() => {
+          this.mainFlip.splice(c, 1, true);
+          this.playFlipSound();
+          if (i === cards.length - 1) {
+            setTimeout(() => {
+              this.stage.mainCardsDealt = true;
+              if (swapComplete) {
+                this.completeGameRound();
+              }
+              /*  if (this.option.autohold && !swapComplete) {
+                 
+                 this.setHolds();
+               } */
+            }, 300);
+          }
+        }, initialDelay);
+        initialDelay = initialDelay + 100;
+      });
+    },
+    setHolds() {
+      var hold = getHolds.setHolds(dealer.mainCards);
+      this.holdReason = hold.reason;
+      //  console.log(hold);
+      hold.result.forEach((h, i) => {
+        cardHolds[i].active = h;
+      });
+    },
+    completeGameRound() {
+      setTimeout(() => {
+          this.stage.results = true;
+        }, 500);
+        this.getResults();
+     /*  this.MDIndex = this.mCards.indexOf("MD");
+      if (this.MDIndex > -1) {
+        setTimeout(() => {
+          this.dealBonusCards();
+        }, 800);
+      } else {
+        setTimeout(() => {
+          this.stage.results = true;
+        }, 500);
+        this.getResults();
+      } */
+    },
+    playDealSound() {
+      this.soundDeal.pause();
+      this.soundDeal.currentTime = 0;
+      var nopromise = {
+        catch: new Function()
+      };
+      (this.soundDeal.play() || nopromise).catch(function() {});
+    },
+    playCashSound() {
+      this.soundCash.pause();
+      this.soundCash.currentTime = 0;
+      var nopromise = {
+        catch: new Function()
+      };
+      (this.soundCash.play() || nopromise).catch(function() {});
+    },
+    playFlipSound() {
+      this.soundDeal.pause();
+      this.soundDeal.currentTime = 0;
+      var nopromise = {
+        catch: new Function()
+      };
+      (this.soundDeal.play() || nopromise).catch(function() {});
+    },
+    playStarSound() {
+      if (this.pDeal) {
+        this.soundStar.pause();
+        this.soundStar.currentTime = 0;
+        var nopromise = {
+          catch: new Function()
+        };
+        (this.soundStar.play() || nopromise).catch(function() {});
+      }
+    },
+    playBtnSound() {
+      this.soundBtn.pause();
+      this.soundBtn.currentTime = 0;
+      var nopromise = {
+        catch: new Function()
+      };
+      (this.soundBtn.play() || nopromise).catch(function() {});
+    },
+    playBetsPlease() {
+      this.soundBets.pause();
+      this.soundBets.currentTime = 0;
+      var nopromise = {
+        catch: new Function()
+      };
+      (this.soundBets.play() || nopromise).catch(function() {});
+    },
+    playChipClick() {
+      this.soundChip.pause();
+      this.soundChip.currentTime = 0;
+      var nopromise = {
+        catch: new Function()
+      };
+      (this.soundChip.play() || nopromise).catch(function() {});
+    },
+    playWinMsg() {
+      this.soundPlayerWins.pause();
+      this.soundPlayerWins.currentTime = 0;
+      var nopromise = {
+        catch: new Function()
+      };
+      (this.soundPlayerWins.play() || nopromise).catch(function() {});
+    },
+    endRound() {
+      this.soundEndRound.pause();
+      this.soundEndRound.currentTime = 0;
+      var nopromise = {
+        catch: new Function()
+      };
+      (this.soundEndRound.play() || nopromise).catch(function() {});
+    }
+  },
+  mounted: function() {
+    this.soundFlip = document.getElementById("soundFlip");
+    this.soundClearCards = document.getElementById("soundClearCards");
+    this.soundDeal = document.getElementById("dSoundDeal");
+    this.soundCash = document.getElementById("soundCashOut");
+    this.soundStar = document.getElementById("soundStar");
+    this.soundBtn = document.getElementById("soundBtnPress");
+    this.soundBets = document.getElementById("betsPlease");
+    this.soundChip = document.getElementById("chipClick");
+    this.soundIntro = document.getElementById("loadingDone");
+    this.soundPlayerWins = document.getElementById("playerWins");
+    this.soundEndRound = document.getElementById("soundLabel");
+    /*     this.playIntro(); */
+    this.cash.baseBet = this.cash.coinValue * this.cash.base_coin_cost;
+    this.cash.MDBet = this.cash.coinValue * this.cash.MD_coin_cost;
+  }
+};
+</script>
+
+<style>
+body {
+  -webkit-touch-callout: none;
+  -webkit-text-size-adjust: none;
+  -webkit-user-select: none;
+  user-select: none;
+  background-attachment: fixed;
+  font-family: "HelveticaNeue-Light", "HelveticaNeue", Helvetica, Arial,
+    sans-serif;
+  font-size: 16px;
+  height: 100vh;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  overflow: hidden;
+
+  background: #0000a0;
+}
+
+.fullScreen,
+#app {
+  /*   font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px; */
+  width: 100%;
+  height: 100%;
+  background-color: #0000a0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
