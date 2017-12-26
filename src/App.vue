@@ -165,6 +165,9 @@ var getHolds = new autoHolder();
 
 var dealer = new dealerPerson(),
   cardPos = [
+/*     'c8LPos',
+    'c7LPos',
+    'c6LPos', */
     "c1Pos",
     "c2Pos",
     "c3Pos",
@@ -413,9 +416,15 @@ export default {
 
       this.stage.showSlideBtns = true;
     },
-    adjustHoldPositions(){
-      console.log(this.holds); //to do... set holds after card positoins are adjusted.
-
+    adjustHoldPositions() {
+      // console.log(this.holds); //to do... set holds after card positoins are adjusted.
+      for (let i = 0; i < 5; i++) {
+        console.log(this.holds[i].active);
+        if (this.holds[i].active) {
+          this.holds[i].active = false;
+          this.holds[i + 3].active = true;
+        }
+      }
     },
     noSlide() {
       this.stage.results = true;
@@ -428,7 +437,7 @@ export default {
     slideRight(direction) {
       console.log(dealer.mainCards);
       dealer.adjustCardPositions();
-      this.adjustHoldPositions();
+
       this.slide.rSet = true;
       this.skipFlyIn = true;
 
@@ -438,6 +447,10 @@ export default {
       this.showMainCard.splice(5, 1, true);
       this.showMainCard.splice(6, 1, true);
       this.showMainCard.splice(7, 1, true);
+
+      setTimeout(() => {
+        this.adjustHoldPositions();
+      });
 
       for (let i = 0; i < 3; i++) {
         setTimeout(() => {
@@ -568,6 +581,7 @@ export default {
           initialDelay = initialDelay + 100;
         }
       });
+      console.log(dealer.mainCards);
     },
     setHolds() {
       var hold = getHolds.setHolds(dealer.mainCards);

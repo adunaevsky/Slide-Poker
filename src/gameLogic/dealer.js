@@ -18,7 +18,8 @@ class dealerPerson {
 
    
     clearCards() {
-        this.mainCards = ['', '', '', '', '','','',''];
+     /*    this.mainCards = ['', '', '', '', '','','','','','','']; */
+        this.mainCards = ['', '', '', '', '','',''];
         /* this.bonusCards = ['', '', '', '', '']; */
 
         // this.mainCards = ['H11', 'H13', 'H12', 'H10', 'H14']; // Royal flush
@@ -140,6 +141,7 @@ class dealerPerson {
     getCard(cardNum) {
         if (!this.devMode) {
             var cardsInDeck = this.deck.length;
+            console.log(cardNum);
             this.mainCards[cardNum] = this.deck[cardsInDeck - 1];
          /*    if (belongsTo === 'main') {
                
