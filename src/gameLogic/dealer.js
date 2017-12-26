@@ -18,8 +18,8 @@ class dealerPerson {
 
    
     clearCards() {
-     /*    this.mainCards = ['', '', '', '', '','','','','','','']; */
-        this.mainCards = ['', '', '', '', '','',''];
+        this.mainCards = ['', '', '', '', '','','','','','',''];
+      /*   this.mainCards = ['', '', '', '', '','','']; */
         /* this.bonusCards = ['', '', '', '', '']; */
 
         // this.mainCards = ['H11', 'H13', 'H12', 'H10', 'H14']; // Royal flush

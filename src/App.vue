@@ -53,7 +53,7 @@
 
     <div id="holdButtons" class="cardArea" :class="{lSlide1:slide.left[0], lSlide2:slide.left[1], lSlide3:slide.left[2], rSlide1:slide.right[0], rSlide2:slide.right[1], rSlide3:slide.right[2]}" >
       <div class="mainCards">
-        <div v-for="(hold,i) in holds" class="cSize" :class="hold.class" @click="updateHold(i)">
+        <div v-for="(hold,i) in holds" class="cSize" :class="hold.class" @click="updateHold(i)" v-if="i < 8 && i > 2">
           <div class="holdButtons" :style="{display: setHoldDisplay(hold )=== true ? 'block':'none'}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30">
               <rect style="fill:#FFE401; stroke:#BB2601; stroke-width:3;" x="20" y="5" rx="5" width="60" height="20" />
@@ -165,9 +165,9 @@ var getHolds = new autoHolder();
 
 var dealer = new dealerPerson(),
   cardPos = [
-/*     'c8LPos',
+        'c8LPos',
     'c7LPos',
-    'c6LPos', */
+    'c6LPos',
     "c1Pos",
     "c2Pos",
     "c3Pos",
@@ -177,7 +177,7 @@ var dealer = new dealerPerson(),
     "c7RPos",
     "c8RPos"
   ],
-  cardHolds = cardPos.map(a => {
+  cardHolds = cardPos.map((a, i) => {
     return {
       class: a,
       active: false,
@@ -241,7 +241,7 @@ export default {
       //  bCards: dealer.bonusCards, //to fix!!!
       showMainCard: [false, false, false, false, false, false, false, false],
       /* showBonusCard: [false, false, false, false, false], */
-      mainFlip: [false, false, false, false, false],
+      mainFlip: [false, false, false, false, false, false, false, false, false, false, false],
       /*  bonusFlip: [false, false, false, false, false], */
       cPos: cardPos,
       labelPos: ["label1", "label2", "label3", "label4", "label5"],
@@ -305,10 +305,10 @@ export default {
 
       for (let i = 0; i < 5; i++) {
         setTimeout(() => {
-          this.showMainCard.splice(i, 1, true);
+          this.showMainCard.splice(i + 3, 1, true);
           this.playDealSound();
           if (i === 4) {
-            this.flipMainCards(300, [0, 1, 2, 3, 4], false);
+            this.flipMainCards(300, [3, 4, 5, 6, 7], false);
           }
         }, i * 200);
       }
@@ -318,8 +318,8 @@ export default {
         totalRemove = 0,
         removedCardsIndex = [];
       this.holds.forEach((held, i, a) => {
-        if (i <= 4) {
-          if (i === 0) {
+        if (i < 8 && i > 2) {
+          if (i === 3) {
             a.forEach((a, s) => {
               if (s < 4 && !a.active) {
                 totalRemove++;
@@ -476,17 +476,17 @@ export default {
     slideLeft(direction) {
       for (let i = 0; i < 3; i++) {
         setTimeout(() => {
-          this.showMainCard.splice(i, 1, false);
-          this.holds[i].display = false;
+          this.showMainCard.splice(i + 3, 1, false);
+          this.holds[i+3].display = false;
 
           this.doSlide(i, direction);
           setTimeout(() => {
-            this.showMainCard.splice(5 + i, 1, true);
+            this.showMainCard.splice(8 + i, 1, true);
           }, 1500);
 
           setTimeout(() => {
-            dealer.getCard(5 + i);
-            this.mainFlip.splice(5 + i, 1, true);
+            dealer.getCard(8 + i);
+            this.mainFlip.splice(8 + i, 1, true);
             if (i === 2) {
               this.stage.results = true;
             }
@@ -568,6 +568,7 @@ export default {
           }
           setTimeout(() => {
             this.mainFlip.splice(c, 1, true);
+            console.log(c);
             this.playFlipSound();
             if (i === a.length - 1) {
               setTimeout(() => {

@@ -1,16 +1,10 @@
 <template>
     <div class="mainCards">
         <!--   {{cards}} -->
-      <!--   <transition name="cardAnimation" v-for="(cardPos,index) in cardPositions"> -->
-         <!--    <transition name="cardAnimation" v-for="(cardPos,index) in cardPositions"> -->
-             <!--   -->
-            <div :style="{display: showCard[index] ? 'block':'none' }"
-            v-for="(cardPos,index) in cardPositions" 
-            :class="[defaultClasses, cardPos, flip[index] ? 'flip' : '', checkFlyIn(showCard[index]) ]" 
-            v-flip="cards[index]">
+        <transition name="cardAnimation" v-for="(cardPos,index) in cardPositions">
+            <div v-if="showCard[index]" :class="[defaultClasses, cardPos, flip[index] ? 'flip' : '' ]" v-flip="cards[index]">
             </div>
-           
-    <!--     </transition> -->
+        </transition>
     </div>
 </template>
 
@@ -24,6 +18,9 @@ export default {
       flyInTime: 500
     };
   },
+  created() {
+    console.log(this.cardPositions);
+  },
   methods: {
     checkFlyIn(show) {
       //  console.log(this.skipFly, show);
@@ -32,13 +29,13 @@ export default {
         return "";
       }
       if (show) {
-       // console.log("fly in animation");
+        // console.log("fly in animation");
         return "cardAnimation-enter-active";
       }
       if (this.skipFly && !show) {
         console.log("display none.");
         return "cardDisppears";
-      } 
+      }
     }
     /*     checkFlyOut(c) {
       console.log(c);
@@ -273,17 +270,17 @@ export default {
 
   @keyframes moveRight1 {
     0% {
-     left: -32.75%;
+      left: -32.75%;
       animation-timing-function: ease-in;
     }
     100% {
-     left: -21.50%;
+      left: -21.5%;
     }
   }
 
   @keyframes moveRight2 {
     0% {
-      left: -21.50%;
+      left: -21.5%;
       animation-timing-function: ease-in;
     }
     100% {
@@ -351,14 +348,13 @@ export default {
     animation: moveRight3 0.8s forwards;
   }
 
-  
   @keyframes moveRight1 {
     0% {
-     left: -58.5%;
+      left: -58.5%;
       animation-timing-function: ease-in;
     }
     100% {
-     left: -40%;
+      left: -40%;
     }
   }
 
@@ -368,7 +364,7 @@ export default {
       animation-timing-function: ease-in;
     }
     100% {
-      left: -20%
+      left: -20%;
     }
   }
 
@@ -468,14 +464,13 @@ export default {
     animation: moveRight3 0.8s forwards;
   }
 
-  
   @keyframes moveRight1 {
     0% {
-     left: -56.75%;
+      left: -56.75%;
       animation-timing-function: ease-in;
     }
     100% {
-     left: -41.25%;
+      left: -41.25%;
     }
   }
 
@@ -485,7 +480,7 @@ export default {
       animation-timing-function: ease-in;
     }
     100% {
-      left: -25%
+      left: -25%;
     }
   }
 
