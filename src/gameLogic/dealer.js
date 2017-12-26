@@ -1,6 +1,6 @@
 class dealerPerson {
     mainCards;
-    bonusCards;
+   /*  bonusCards; */
     deck;
   
    /*  numBonusCards; */
@@ -18,8 +18,8 @@ class dealerPerson {
 
    
     clearCards() {
-        this.mainCards = ['', '', '', '', ''];
-        this.bonusCards = ['', '', '', '', ''];
+        this.mainCards = ['', '', '', '', '','','',''];
+        /* this.bonusCards = ['', '', '', '', '']; */
 
         // this.mainCards = ['H11', 'H13', 'H12', 'H10', 'H14']; // Royal flush
         //  this.mainCards = ['D10', 'D11', 'D12', 'D13', 'D14']; // Royal flush
@@ -137,15 +137,16 @@ class dealerPerson {
 
 
     }
-    getCard(cardNum, belongsTo) {
+    getCard(cardNum) {
         if (!this.devMode) {
             var cardsInDeck = this.deck.length;
-            if (belongsTo === 'main') {
-                this.mainCards[cardNum] = this.deck[cardsInDeck - 1];
-            }
-            if (belongsTo === 'bonus') {
+            this.mainCards[cardNum] = this.deck[cardsInDeck - 1];
+         /*    if (belongsTo === 'main') {
+               
+            } */
+        /*     if (belongsTo === 'bonus') {
                 this.bonusCards[cardNum] = this.deck[cardsInDeck - 1];
-            }
+            } */
             this.deck.pop();
         }
     }

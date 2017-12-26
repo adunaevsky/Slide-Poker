@@ -182,6 +182,18 @@ export default {
     }
 }
 
+.animateLSlide1{
+    animation: moveLeft1 1.2s forwards;
+}
+.animateLSlide2{
+    animation: moveLeft2 1.2s forwards;
+}
+.animateLSlide3{
+    animation: moveLeft3 1.2s forwards;
+}
+
+
+
 .mainCards, .singleResult {
     margin: 0 auto;
     position: relative;
@@ -259,6 +271,38 @@ export default {
 }
 
 @media all and (max-aspect-ratio: 970 / 600) and (min-aspect-ratio: 520 / 600) {
+
+
+@keyframes moveLeft1 {
+    0% {
+        left: -10%;
+        animation-timing-function: ease-in;
+    }
+    100% {
+        left: -25.5%;
+    }
+}
+
+@keyframes moveLeft2 {
+    0% {
+        left: -25.5%;
+        animation-timing-function: ease-in;
+    }
+    100% {
+        left: -41%;
+    }
+}
+
+@keyframes moveLeft3 {
+    0% {
+        left: -41%;
+        animation-timing-function: ease-in;
+    }
+    100% {
+        left: -56.5%;
+    }
+}
+
     /*SQUARE (DESKTOP) MODE*/
     .mainCards {
         width: 80%;
@@ -297,6 +341,12 @@ export default {
 .label3,
 .label4,
 .label5,
+.c8lPos,
+.c7LPos,
+.c6LPos,
+.c8RPos,
+.c7RPos,
+.c6RPos,
 .c5Pos,
 .c4Pos,
 .c3Pos,
@@ -304,6 +354,16 @@ export default {
 .c1Pos {
     position: absolute;
 }
+
+
+.c8lPos{left: -56.5%;}
+.c7LPos{left: -37%;}
+.c6LPos{left: -17.5%;}
+
+.c8RPos{right: -56.5%;}
+.c7RPos{right: -37%;}
+.c6RPos{right: -17.5%;}
+
 
 .c5Pos {
     right: 2%;

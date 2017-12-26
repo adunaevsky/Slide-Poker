@@ -10,7 +10,7 @@
 
     <cash-display v-bind:baseBet="cash.baseBet" v-bind:MDBet="cash.MDBet" v-bind:bal="cash.balance" v-bind:win="cash.win" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
 
-    <div id="mainCards" class="cardArea">
+    <div id="mainCards" class="cardArea" :class="{animateLSlide1:slide.left[0], animateLSlide2:slide.left[1], animateLSlide3:slide.left[2]}" >
       <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:multiplyNum="getNumPayMultiply()"></main-cards>
     </div>
 
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <div id="holdButtons" class="cardArea">
+    <div id="holdButtons" class="cardArea" :class="{animateLSlide1:slide.left[0], animateLSlide2:slide.left[1], animateLSlide3:slide.left[2]}" >
       <div class="mainCards">
         <div v-for="(hold,i) in holds" class="cSize" :class="hold.class" @click="updateHold(i)">
           <div style="padding-top:42%; margin:0 auto; text-align:center; cursor:pointer;" v-if="hold.active">
@@ -77,6 +77,9 @@
       </div>
 
     </div>
+
+ <button v-if="stage.showSlideBtns" @click="slideCards('left')" style="position:absolute; bottom:0%; width: 10em; font-size:1em; cursor: pointer;">slide LEFT</button>
+ <button v-if="stage.showSlideBtns" @click="slideCards('right')" style="position:absolute; bottom:0%; width: 10em; left:10em; font-size:1em; cursor: pointer;">slide RIGHT</button>
 
     <!--     <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
             <span v-if="option.autohold">☑</span>
@@ -160,14 +163,22 @@ var finalResults = new handResult();
 var getHolds = new autoHolder();
 
 var dealer = new dealerPerson(),
-  cardPos = ["c1Pos", "c2Pos", "c3Pos", "c4Pos", "c5Pos"],
+  cardPos = [
+    "c1Pos",
+    "c2Pos",
+    "c3Pos",
+    "c4Pos",
+    "c5Pos",
+    "c6RPos",
+    "c7RPos",
+    "c8RPos"
+  ],
   cardHolds = cardPos.map(a => {
     return {
       class: a,
       active: false
     };
   });
-
 
 export default {
   name: "app",
@@ -193,9 +204,14 @@ export default {
         removeUnheldCards: false,
         cardSwapComplete: false,
         draw: false,
-        results: false
+        results: false,
+        showSlideBtns:false
       },
-     /*  MDIndex: -1, */
+      slide: {
+        left: [false, false, false],
+        right: [false, false, false]
+      },
+      /*  MDIndex: -1, */
       cash: {
         balance: 1000000,
         totalBet: 0,
@@ -215,11 +231,11 @@ export default {
       defaultClasses: "cSize flip-container",
       topShiftClass: ["bCard1", "bCard2", "bCard3", "bCard4", "bCard5"],
       mCards: dealer.mainCards,
-    //  bCards: dealer.bonusCards, //to fix!!!
-      showMainCard: [false, false, false, false, false],
-      showBonusCard: [false, false, false, false, false],
+      //  bCards: dealer.bonusCards, //to fix!!!
+      showMainCard: [false, false, false, false, false, false, false, false],
+      /* showBonusCard: [false, false, false, false, false], */
       mainFlip: [false, false, false, false, false],
-      bonusFlip: [false, false, false, false, false],
+      /*  bonusFlip: [false, false, false, false, false], */
       cPos: cardPos,
       labelPos: ["label1", "label2", "label3", "label4", "label5"],
       holds: cardHolds,
@@ -240,7 +256,7 @@ export default {
     getTopShift(i) {
       return this.topShiftClass[i];
     },
-/*     getNumBonusCards() {
+    /*     getNumBonusCards() {
       return dealer.numBonusCards;
     }, */
     getNumPayMultiply() {
@@ -274,11 +290,11 @@ export default {
 
       this.cash.balance = this.cash.balance - this.cash.totalBet;
 
-      for (let i = 0; i < this.showMainCard.length; i++) {
+      for (let i = 0; i < 5; i++) {
         setTimeout(() => {
           this.showMainCard.splice(i, 1, true);
           this.playDealSound();
-          if (i === this.showMainCard.length - 1) {
+          if (i === 4) {
             this.flipMainCards(300, [0, 1, 2, 3, 4], false);
           }
         }, i * 200);
@@ -289,47 +305,53 @@ export default {
         totalRemove = 0,
         removedCardsIndex = [];
       this.holds.forEach((held, i, a) => {
-        if (i === 0) {
-          a.forEach(a => {
-            if (!a.active) {
-              totalRemove++;
+        if (i <= 4) {
+          if (i === 0) {
+            a.forEach((a, s) => {
+              if (s < 4 && !a.active) {
+                totalRemove++;
+              }
+            });
+            if (totalRemove === 0) {
+              this.completeGameRound();
             }
-          });
-          if (totalRemove === 0) {
-            this.completeGameRound();
           }
-        }
-        //  console.log(totalRemove);
-        if (!held.active) {
-          cardsRemoved++;
-          setTimeout(() => {
-            this.showMainCard.splice(i, 1, false);
 
-            dealer.swapCard(i);
-            this.playDealSound();
+          if (!held.active) {
+            cardsRemoved++;
             setTimeout(() => {
-              this.mainFlip.splice(i, 1, false);
-            }, 100);
-          }, 200 * cardsRemoved);
-          removedCardsIndex.push(i);
+              this.showMainCard.splice(i, 1, false);
+
+              dealer.swapCard(i);
+              this.playDealSound();
+              setTimeout(() => {
+                this.mainFlip.splice(i, 1, false);
+              }, 100);
+            }, 200 * cardsRemoved);
+            removedCardsIndex.push(i);
+          }
+        //  console.log(i, totalRemove, held.active, removedCardsIndex);
         }
       });
 
       setTimeout(() => {
         removedCardsIndex.forEach((cardIndexNum, i, a) => {
-          setTimeout(() => {
-            this.showMainCard.splice(cardIndexNum, 1, true);
-            this.playDealSound();
-            if (i === a.length - 1) {
-              this.flipMainCards(300, a, this.stage.cardSwapComplete);
-            }
-          }, i * 200);
+          if (i <= a.length - 1) {
+            setTimeout(() => {
+              /* console.log(this.showMainCard, i, a.length); */
+              this.showMainCard.splice(cardIndexNum, 1, true);
+              this.playDealSound();
+              if (i === a.length - 1) {
+                this.flipMainCards(300, a, this.stage.cardSwapComplete);
+              }
+            }, i * 200);
+          }
         });
       }, 200 * totalRemove + 500);
 
       this.stage.cardSwapComplete = true;
     },
-   /*  dealBonusCards() {
+    /*  dealBonusCards() {
       for (let i = 0; i < 5; i++) {
         setTimeout(() => {
           if (i < dealer.numBonusCards) {
@@ -359,7 +381,7 @@ export default {
       this.finalResults = [];
       var cardCombos = [];
       this.finalResults.push(finalResults.fiveCards(this.mCards));
-     /*  if (this.MDIndex === -1) {
+      /*  if (this.MDIndex === -1) {
         this.finalResults.push(finalResults.fiveCards(this.mCards));
       } else {
         this.bCards.forEach(c => {
@@ -378,15 +400,39 @@ export default {
       } */
 
       this.analyzeCash();
+
+     this.stage.showSlideBtns = true;
+    },
+    slideCards(direction) {
+ this.stage.showSlideBtns = false;
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+          this.doSlide(i, direction);
+          setTimeout(() => {
+            this.showMainCard.splice(5 + i, 1, true);
+          }, 1500);
+          setTimeout(() => {
+            dealer.getCard(5 + i);
+            this.mainFlip.splice(5 + i, 1, true);
+          }, 1800);
+        }, 1200 + i * 3700);
+      }
+    },
+    doSlide(cardNum, direction) {
+      for (var i = 0; i < this.slide[direction].length; i++) {
+        if (cardNum === i) {
+          this.slide[direction].splice(i, 1, true);
+        } else {
+          this.slide[direction].splice(i, 1, false);
+        }
+      }
     },
     analyzeCash() {
       this.cash.win = 0;
       this.finalResults.forEach(d => {
         d.reward =
-          this.cash.coinValue *
-          this.cash.base_coin_cost *
-          d.payout * 1 ;  //numPayMultiply goes here.
-         /*  (this.MDIndex > -1 ? dealer.numPayMultiply : 1); */
+          this.cash.coinValue * this.cash.base_coin_cost * d.payout * 1; //numPayMultiply goes here.
+        /*  (this.MDIndex > -1 ? dealer.numPayMultiply : 1); */
         this.cash.win = this.cash.win + d.reward;
       });
       // console.log(this.cash.win);
@@ -418,38 +464,44 @@ export default {
       this.stage.cardSwapComplete = false;
       this.holdReason = "";
 
-      for (var i = 0; i < 5; i++) {
+      setTimeout(() => {
+        for (var s = 0; s < this.slide.left.length; s++) {
+          this.slide.left.splice(s, 1, false);
+          this.slide.right.splice(s, 1, false);
+        }
+      }, 300);
+
+      for (var i = 0; i < 8; i++) {
         this.mCards.splice(i, 1, "");
-     /*    this.bCards.splice(i, 1, ""); */
-        this.showBonusCard.splice(i, 1, false);
+        /*    this.bCards.splice(i, 1, ""); */
+        /*    this.showBonusCard.splice(i, 1, false); */
         this.mainFlip.splice(i, 1, false);
-        this.bonusFlip.splice(i, 1, false);
+        /*  this.bonusFlip.splice(i, 1, false); */
         this.showMainCard.splice(i, 1, false);
         this.holds[i].active = false;
       }
     },
     flipMainCards(initialDelay, cards, swapComplete) {
-      _.forEach(cards, (c, i) => {
-        if (this.mCards[c] === "") {
-          dealer.getCard(c, "main");
-        }
-        setTimeout(() => {
-          this.mainFlip.splice(c, 1, true);
-          this.playFlipSound();
-          if (i === cards.length - 1) {
-            setTimeout(() => {
-              this.stage.mainCardsDealt = true;
-              if (swapComplete) {
-                this.completeGameRound();
-              }
-              /*  if (this.option.autohold && !swapComplete) {
-                 
-                 this.setHolds();
-               } */
-            }, 300);
+      _.forEach(cards, (c, i, a) => {
+        if (i <= a.length - 1) {
+          //  console.log('got here.', i,'swapComplete: ', swapComplete)
+          if (this.mCards[c] === "") {
+            dealer.getCard(c);
           }
-        }, initialDelay);
-        initialDelay = initialDelay + 100;
+          setTimeout(() => {
+            this.mainFlip.splice(c, 1, true);
+            this.playFlipSound();
+            if (i === a.length - 1) {
+              setTimeout(() => {
+                this.stage.mainCardsDealt = true;
+                if (swapComplete) {
+                  this.completeGameRound();
+                }
+              }, 300);
+            }
+          }, initialDelay);
+          initialDelay = initialDelay + 100;
+        }
       });
     },
     setHolds() {
@@ -462,10 +514,10 @@ export default {
     },
     completeGameRound() {
       setTimeout(() => {
-          this.stage.results = true;
-        }, 500);
-        this.getResults();
-     /*  this.MDIndex = this.mCards.indexOf("MD");
+        this.stage.results = true;
+      }, 500);
+      this.getResults();
+      /*  this.MDIndex = this.mCards.indexOf("MD");
       if (this.MDIndex > -1) {
         setTimeout(() => {
           this.dealBonusCards();
