@@ -171,6 +171,14 @@ class dealerPerson {
 
     }
 
+    adjustCardPositions(){
+        for(var i = 0; i < 3; i++){
+            this.mainCards.pop();
+            this.mainCards.unshift('');
+        }
+        console.log(this.mainCards);
+    }
+
     newDeck() {
        /*  this.MDCard = false; */
         var suits = ['C', 'H', 'S', 'D'];

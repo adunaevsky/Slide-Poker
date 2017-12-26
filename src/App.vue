@@ -10,8 +10,8 @@
 
     <cash-display v-bind:baseBet="cash.baseBet" v-bind:MDBet="cash.MDBet" v-bind:bal="cash.balance" v-bind:win="cash.win" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
 
-    <div id="mainCards" class="cardArea" :class="{animateLSlide1:slide.left[0], animateLSlide2:slide.left[1], animateLSlide3:slide.left[2]}" >
-      <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:multiplyNum="getNumPayMultiply()"></main-cards>
+    <div id="mainCards" class="cardArea" :class="{lSlide1:slide.left[0], lSlide2:slide.left[1], lSlide3:slide.left[2], rSlide1:slide.right[0], rSlide2:slide.right[1], rSlide3:slide.right[2], setRSlide: slide.rSet}" >
+      <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:multiplyNum="getNumPayMultiply()" v-bind:skipFly="skipFlyIn"></main-cards>
     </div>
 
   <!--   <div id="bonusCards" class="cardArea" v-for="(showCard,index) in showBonusCard" :class="[getTopShift(index)]">
@@ -51,10 +51,10 @@
       </div>
     </div>
 
-    <div id="holdButtons" class="cardArea" :class="{animateLSlide1:slide.left[0], animateLSlide2:slide.left[1], animateLSlide3:slide.left[2]}" >
+    <div id="holdButtons" class="cardArea" :class="{lSlide1:slide.left[0], lSlide2:slide.left[1], lSlide3:slide.left[2], rSlide1:slide.right[0], rSlide2:slide.right[1], rSlide3:slide.right[2]}" >
       <div class="mainCards">
         <div v-for="(hold,i) in holds" class="cSize" :class="hold.class" @click="updateHold(i)">
-          <div style="padding-top:42%; margin:0 auto; text-align:center; cursor:pointer;" v-if="hold.active">
+          <div class="holdButtons" :style="{display: setHoldDisplay(hold )=== true ? 'block':'none'}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30">
               <rect style="fill:#FFE401; stroke:#BB2601; stroke-width:3;" x="20" y="5" rx="5" width="60" height="20" />
               <text text-anchor="middle" font-weight="900" font-size="15" x="50" y="20.5" fill="#000000" opacity="1">
@@ -65,13 +65,13 @@
       </div>
     </div>
 
-    <div class="btnHeight" v-if="stage.newRound || stage.results">
+    <div class="btnHeight" :style="{display: stage.newRound || stage.results ? 'block': 'none'}" >
       <div class="btnBase" v-on:click="deal">
         <btn-right-deal></btn-right-deal>
       </div>
     </div>
 
-    <div class="btnHeight" v-if="stage.mainCardsDealt && !stage.removeUnheldCards">
+    <div class="btnHeight" :style="{display: stage.mainCardsDealt && !stage.removeUnheldCards ? 'block': 'none'}">
       <div class="btnBase" v-on:click="draw">
         <btn-right-draw></btn-right-draw>
       </div>
@@ -80,6 +80,7 @@
 
  <button v-if="stage.showSlideBtns" @click="slideCards('left')" style="position:absolute; bottom:0%; width: 10em; font-size:1em; cursor: pointer;">slide LEFT</button>
  <button v-if="stage.showSlideBtns" @click="slideCards('right')" style="position:absolute; bottom:0%; width: 10em; left:10em; font-size:1em; cursor: pointer;">slide RIGHT</button>
+ <button v-if="stage.showSlideBtns" @click="noSlide()" style="position:absolute; bottom:0%; width: 10em; left:20em; font-size:1em; cursor: pointer;">no slide</button>
 
     <!--     <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
             <span v-if="option.autohold">☑</span>
@@ -176,7 +177,8 @@ var dealer = new dealerPerson(),
   cardHolds = cardPos.map(a => {
     return {
       class: a,
-      active: false
+      active: false,
+      display: true
     };
   });
 
@@ -205,12 +207,14 @@ export default {
         cardSwapComplete: false,
         draw: false,
         results: false,
-        showSlideBtns:false
+        showSlideBtns: false
       },
       slide: {
         left: [false, false, false],
-        right: [false, false, false]
+        right: [false, false, false],
+        rSet: false
       },
+      skipFlyIn: false,
       /*  MDIndex: -1, */
       cash: {
         balance: 1000000,
@@ -243,6 +247,12 @@ export default {
     };
   },
   methods: {
+    setHoldDisplay(h) {
+      if (h.display && h.active) {
+        return true;
+      }
+      return false;
+    },
     openInfoBox() {
       this.infoBoxOpen = true;
       document.getElementById("infoFrame").style.zIndex = "1";
@@ -330,7 +340,7 @@ export default {
             }, 200 * cardsRemoved);
             removedCardsIndex.push(i);
           }
-        //  console.log(i, totalRemove, held.active, removedCardsIndex);
+          //  console.log(i, totalRemove, held.active, removedCardsIndex);
         }
       });
 
@@ -401,19 +411,72 @@ export default {
 
       this.analyzeCash();
 
-     this.stage.showSlideBtns = true;
+      this.stage.showSlideBtns = true;
+    },
+    adjustHoldPositions(){
+      console.log(this.holds); //to do... set holds after card positoins are adjusted.
+
+    },
+    noSlide() {
+      this.stage.results = true;
+      this.stage.showSlideBtns = false;
     },
     slideCards(direction) {
- this.stage.showSlideBtns = false;
+      this.stage.showSlideBtns = false;
+      direction === "right" ? this.slideRight() : this.slideLeft("left");
+    },
+    slideRight(direction) {
+      console.log(dealer.mainCards);
+      dealer.adjustCardPositions();
+      this.adjustHoldPositions();
+      this.slide.rSet = true;
+      this.skipFlyIn = true;
+
+      this.mainFlip.splice(5, 1, true);
+      this.mainFlip.splice(6, 1, true);
+      this.mainFlip.splice(7, 1, true);
+      this.showMainCard.splice(5, 1, true);
+      this.showMainCard.splice(6, 1, true);
+      this.showMainCard.splice(7, 1, true);
+
       for (let i = 0; i < 3; i++) {
         setTimeout(() => {
+          this.showMainCard.splice(7 - i, 1, false);
+          this.holds[7 - i].display = false;
+          this.slide.rSet = false;
+
+          this.doSlide(i, "right");
+          setTimeout(() => {
+            this.showMainCard.splice(2 - i, 1, true);
+          }, 1500);
+
+          setTimeout(() => {
+            dealer.getCard(2 - i);
+            this.mainFlip.splice(2 - i, 1, true);
+            if (i === 2) {
+              this.stage.results = true;
+            }
+          }, 1800);
+        }, 1200 + i * 3700);
+      }
+    },
+    slideLeft(direction) {
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+          this.showMainCard.splice(i, 1, false);
+          this.holds[i].display = false;
+
           this.doSlide(i, direction);
           setTimeout(() => {
             this.showMainCard.splice(5 + i, 1, true);
           }, 1500);
+
           setTimeout(() => {
             dealer.getCard(5 + i);
             this.mainFlip.splice(5 + i, 1, true);
+            if (i === 2) {
+              this.stage.results = true;
+            }
           }, 1800);
         }, 1200 + i * 3700);
       }
@@ -455,6 +518,7 @@ export default {
       this.soundClearCards.play();
 
       dealer.newDeck();
+      this.skipFlyIn = false;
 
       this.stage.mainCardsDealt = false;
       this.stage.removeUnheldCards = false;
@@ -479,6 +543,7 @@ export default {
         /*  this.bonusFlip.splice(i, 1, false); */
         this.showMainCard.splice(i, 1, false);
         this.holds[i].active = false;
+        this.holds[i].display = true;
       }
     },
     flipMainCards(initialDelay, cards, swapComplete) {
@@ -513,9 +578,9 @@ export default {
       });
     },
     completeGameRound() {
-      setTimeout(() => {
+      /*   setTimeout(() => {
         this.stage.results = true;
-      }, 500);
+      }, 500); */
       this.getResults();
       /*  this.MDIndex = this.mCards.indexOf("MD");
       if (this.MDIndex > -1) {
@@ -663,5 +728,12 @@ body {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.holdButtons {
+  padding-top: 42%;
+  margin: 0 auto;
+  text-align: center;
+  cursor: pointer;
 }
 </style>
