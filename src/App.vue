@@ -14,6 +14,20 @@
       <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:multiplyNum="getNumPayMultiply()" v-bind:skipFly="skipFlyIn"></main-cards>
     </div>
 
+    <div id="holdButtons" class="cardArea" :class="{lSlide1:slide.left[0], lSlide2:slide.left[1], lSlide3:slide.left[2], rSlide1:slide.right[0], rSlide2:slide.right[1], rSlide3:slide.right[2]}" >
+      <div class="mainCards">
+        <div v-for="(hold,i) in holds" class="cSize" :class="hold.class" @click="updateHold(i)" v-if="i < 8 && i > 2">
+          <div class="holdButtons" :style="{display: setHoldDisplay(hold )=== true ? 'block':'none'}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30">
+              <rect style="fill:#FFE401; stroke:#BB2601; stroke-width:3;" x="20" y="5" rx="5" width="60" height="20" />
+              <text text-anchor="middle" font-weight="900" font-size="15" x="50" y="20.5" fill="#000000" opacity="1">
+                HELD</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
       <div class="cardArea"   v-for="(r,index) in finalResults"  :class="[getTopShift(index)]" >
         <div v-if="stage.multiResults" style="position: absolute;" class="label">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 91 12"   @click="reviewCards(index)">
@@ -45,19 +59,7 @@
       </div>
     </div>
 
-    <div id="holdButtons" class="cardArea" :class="{lSlide1:slide.left[0], lSlide2:slide.left[1], lSlide3:slide.left[2], rSlide1:slide.right[0], rSlide2:slide.right[1], rSlide3:slide.right[2]}" >
-      <div class="mainCards">
-        <div v-for="(hold,i) in holds" class="cSize" :class="hold.class" @click="updateHold(i)" v-if="i < 8 && i > 2">
-          <div class="holdButtons" :style="{display: setHoldDisplay(hold )=== true ? 'block':'none'}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30">
-              <rect style="fill:#FFE401; stroke:#BB2601; stroke-width:3;" x="20" y="5" rx="5" width="60" height="20" />
-              <text text-anchor="middle" font-weight="900" font-size="15" x="50" y="20.5" fill="#000000" opacity="1">
-                HELD</text>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     <div class="btnHeight" :style="{display: stage.newRound || stage.results ? 'block': 'none'}" >
       <div class="btnBase" v-on:click="deal">
