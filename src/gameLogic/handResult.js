@@ -24,39 +24,57 @@ class handResult {
             r.fill = tableValues[1].clr;
         }
         else if (this.fourOfKind(cards)) {
-            r.label = tableValues[2].text;
-            r.payout = tableValues[2].reward;
-            r.fill = tableValues[2].clr;
+            if (this.fourOK_A_w_Kicker(cards)) {
+                r.label = tableValues[2].text;
+                r.payout = tableValues[2].reward;
+                r.fill = tableValues[2].clr;
+            } else if (this.fourOK_24_w_Kicker(cards)) {
+                r.label = tableValues[3].text;
+                r.payout = tableValues[3].reward;
+                r.fill = tableValues[3].clr;
+            } else if (this.fourOK_A(cards)) {
+                r.label = tableValues[4].text;
+                r.payout = tableValues[4].reward;
+                r.fill = tableValues[4].clr;
+            } else if (this.fourOK_2_to_4(cards)) {
+                r.label = tableValues[5].text;
+                r.payout = tableValues[5].reward;
+                r.fill = tableValues[5].clr;
+            } else {
+                r.label = tableValues[6].text;
+                r.payout = tableValues[6].reward;
+                r.fill = tableValues[6].clr;
+            }
         }
         else if (this.fullHouse(cards)) {
-            r.label = tableValues[3].text;
-            r.payout = tableValues[3].reward;
-            r.fill = tableValues[3].clr;
-        }
-        else if (this.flush(cards)) {
-            r.label = tableValues[4].text;
-            r.payout = tableValues[4].reward;
-            r.fill = tableValues[4].clr;
-        }
-        else if (this.straight(cards)) {
-            r.label = tableValues[5].text;
-            r.payout = tableValues[5].reward;
-            r.fill = tableValues[5].clr;
-        }
-        else if (this.threeOfKind(cards)) {
-            r.label = tableValues[6].text;
-            r.payout = tableValues[6].reward;
-            r.fill = tableValues[6].clr;
-        }
-        else if (this.twoPair(cards)) {
             r.label = tableValues[7].text;
             r.payout = tableValues[7].reward;
             r.fill = tableValues[7].clr;
         }
-        else if (this.pair(cards)) {
+        else if (this.flush(cards)) {
             r.label = tableValues[8].text;
             r.payout = tableValues[8].reward;
             r.fill = tableValues[8].clr;
+        }
+        else if (this.straight(cards)) {
+            r.label = tableValues[9].text;
+            r.payout = tableValues[9].reward;
+            r.fill = tableValues[9].clr;
+        }
+        else if (this.threeOfKind(cards)) {
+            r.label = tableValues[10].text;
+            r.payout = tableValues[10].reward;
+            r.fill = tableValues[10].clr;
+        }
+        else if (this.twoPair(cards)) {
+            r.label = tableValues[11].text;
+            r.payout = tableValues[11].reward;
+            r.fill = tableValues[11].clr;
+        }
+        else if (this.pair(cards)) {
+            r.label = tableValues[12].text;
+            r.payout = tableValues[12].reward;
+            r.fill = tableValues[12].clr;
         } else if (this.pairLow(cards)) {
             r.label = 'Non Qualifying Pair';
             r.payout = 0;
@@ -94,7 +112,7 @@ class handResult {
 
         var result = false;
         if (this.findSameSuits(card).length === 5) {
-           
+
             result = this.straight(card);
         }
         return result;
@@ -122,8 +140,8 @@ class handResult {
 
         var result2 = true;
         if (aceFound) {
-            
-      //  console.log('got to ace case of striaght');
+
+            //  console.log('got to ace case of striaght');
             _.forEach(card, (c) => {
                 if (c.value === 14) { c.value = 1; }
             });
@@ -154,6 +172,89 @@ class handResult {
         }
         return result;
     }
+
+
+    fourOK_A_w_Kicker(cards) {
+        var result = false;
+        var valueCounts = this.getValueCounts(cards);
+        /*   var fourAces = false;
+          for (var key in valueCounts) {
+              if (valueCounts[key] === 4 && key === '14') {
+                  fourAces = true;
+              }
+          } */
+
+        if (this.fourOK_A(cards, valueCounts)) {
+            for (var key in valueCounts) {
+                if (valueCounts[key] !== 4) {
+                    var kickerCardValue = parseInt(key);
+                    if (kickerCardValue <= 4) {
+                        result = true;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    fourOK_24_w_Kicker(cards) {
+        var result = false;
+        var valueCounts = this.getValueCounts(cards);
+        /*    var fourLows = false;
+          for (var key in valueCounts) {
+              if (valueCounts[key] === 4 && (key === '2' || key === '3'  || key === '4')) {
+                  fourLows = true;
+              }
+          } */
+
+        if (this.fourOK_2_to_4(cards, valueCounts)) {
+            for (var key in valueCounts) {
+                if (valueCounts[key] !== 4) {
+                    var kickerCardValue = parseInt(key);
+                    if (kickerCardValue <= 4 || kickerCardValue === 14) {
+                        result = true;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    fourOK_A(cards, valueCounts) {
+        if (typeof valueCounts === 'undefined') {
+            valueCounts = this.getValueCounts(cards);
+        }
+        var fourAces = false;
+        for (var key in valueCounts) {
+            if (valueCounts[key] === 4 && key === '14') {
+                fourAces = true;
+            }
+        }
+        return fourAces;
+    }
+
+    fourOK_2_to_4(cards, valueCounts) {
+        //  var result = false;
+        if (typeof valueCounts === 'undefined') {
+            valueCounts = this.getValueCounts(cards);
+        }
+
+        var fourLows = false;
+        for (var key in valueCounts) {
+            if (valueCounts[key] === 4 && (key === '2' || key === '3' || key === '4')) {
+                fourLows = true;
+            }
+        }
+        return fourLows;
+    }
+
+    fourOK_5_to_K(cards) {
+        // console.log(cards);
+        return false;
+    }
+
     threeOfKind(card) {
         var result = false;
         var valueCounts = this.getValueCounts(card);

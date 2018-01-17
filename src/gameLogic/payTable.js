@@ -1,15 +1,31 @@
 var tableValues = [{
     text: 'Royal Flush',
     clr: '#E2172D',
-    reward: 800
+    reward: 1000
 }, {
     text: 'Straight Flush',
     clr: '#E7681B',
     reward: 50
 }, {
-    text: 'Four of a Kind',
+    text: '4 Aces w/ 2-4',
+    clr: '#ea8623',
+    reward: 400
+}, {
+    text: '4 2-4 w/ A-4',
     clr: '#E7A51B',
-    reward: 25
+    reward: 160
+}, {
+    text: 'Four Aces',
+    clr: '#E6C817',
+    reward: 160
+}, {
+    text: 'Four 2-4',
+    clr: '#E4EB19',
+    reward: 80
+}, {
+    text: 'Four 5-K',
+    clr: '#68EB19',
+    reward: 50
 }, {
     text: 'Full House',
     clr: '#24A400',
@@ -29,11 +45,12 @@ var tableValues = [{
 }, {
     text: 'Two Pair',
     clr: '#A501A5',
-    reward: 2
+    reward: 1
 }, {
     text: 'Jacks or Better',
     clr: '#D701AF',
     reward: 1
 }];
+
 
 export {tableValues as default}

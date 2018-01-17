@@ -114,7 +114,7 @@ export default {
     }
     .payTable {
         width: 100%;
-        top: 20%;
+        top: 19%;
     }
     .threeColumn {
         display: block;
@@ -134,7 +134,7 @@ export default {
     .payTable {
         width: 18%;
         top: 19%;
-        left: 81%;
+        left: 83.5%;
     }
     .threeColumn {
         display: none;

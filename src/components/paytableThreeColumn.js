@@ -3,7 +3,7 @@ var d3 = Object.assign({}, require('d3-selection'));
 
 var opts = {
     width: 600,
-    height: 100,
+    height: 120,
     margins: { top: 0, right: 0, bottom: 0, left: 0 }
 };
 
@@ -23,23 +23,25 @@ function tbl(value) {
         {
             xShift: 4,
             filterData: function (v, i) {
-                return i >= 6;
+                return i >= 8;
             
             }
         },
         {
             xShift: 204,
             filterData: function (v, i) {
-                return i >= 3 && i < 6;
+                return i >= 4 && i < 8;
             }
         },
         {
             xShift: 404,
             filterData: function (v, i) {
-                return i < 3;
+                return i < 4;
             }
         },
     ]
+
+    var sf = 0.7; //scale factor
 
     colSpecs.forEach((c, i) => {
 
@@ -49,24 +51,24 @@ function tbl(value) {
         col.enter().append('rect')
             .attr('class', 'cell row')
             .attr('width', 190)
-            .attr('height', 30)
+            .attr('height', 30 * sf)
             .attr('x', c.xShift)
             .attr('rx', 10)
             .attr('ry', 10)
             .attr('y', (y, i) => {
-                return ((33 * i) + 1);
+                return (((33 * i) + 1) * sf);
             })
             .style('fill', (c) => {
                 return c.clr;
             })
             .style('stroke', 'silver')
-            .style('stroke-width', '2px')
+            .style('stroke-width', '1px')
             .style('opacity', 1)
             .attr('id', 'rsltRow');
 
         col.enter().append('text')
             .attr('y', (y, i) => {
-                return (33 * (i + 1) - 10)
+                return ((33 * (i + 1) - 10)* sf)
             })
             .attr('x', c.xShift + 6)
             .attr('class', 'payTableText')
@@ -75,11 +77,11 @@ function tbl(value) {
 
         col.enter().append('text')
             .attr('y', (y, i) => {
-                return (33 * (i + 1) - 10)
+                return ((33 * (i + 1) - 6) * sf)
             })
             .attr('x', c.xShift + 180)
             .attr('class', 'payTableText')
-            .attr('font-size', 22)
+            .attr('font-size', 21)
             .attr('text-anchor', 'end')
             .text(d => d.reward);
 

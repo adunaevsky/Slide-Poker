@@ -141,7 +141,7 @@ class dealerPerson {
     getCard(cardNum) {
         if (!this.devMode) {
             var cardsInDeck = this.deck.length;
-            console.log(cardNum);
+           /*  console.log(cardNum); */
             this.mainCards[cardNum] = this.deck[cardsInDeck - 1];
          /*    if (belongsTo === 'main') {
                
@@ -173,13 +173,6 @@ class dealerPerson {
 
     }
 
-    adjustCardPositions(){
-        for(var i = 0; i < 3; i++){
-            this.mainCards.pop();
-            this.mainCards.unshift('');
-        }
-        console.log(this.mainCards);
-    }
 
     newDeck() {
        /*  this.MDCard = false; */
