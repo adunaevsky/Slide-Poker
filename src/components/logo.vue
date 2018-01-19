@@ -1,11 +1,6 @@
 <template>
     <div class="logo">
         <img class="logoImg" src="../assets/logo.svg">
-
-
-
-
-
     </div>
 </template>
 
@@ -35,7 +30,7 @@ export default {
 @media all and (min-aspect-ratio: 970 / 600) {
     /*LANDSCAPE MODE*/
     .logo {
-        top: 1%;
+        top: 0%;
         width: 56%;
         left: 18%;
         /*  margin: 0 auto; */
@@ -45,7 +40,7 @@ export default {
 @media all and (max-aspect-ratio: 520 / 600) {
     /*PORTRAIT MODE*/
     .logo {
-        top: 10%;
+        top: 7%;
         width: 65%;
         left: 0%;
     }
@@ -54,7 +49,7 @@ export default {
 @media all and (max-aspect-ratio: 970 / 600) and (min-aspect-ratio: 520 / 600) {
     /*SQUARE (DESKTOP) MODE*/
     .logo {
-        top: 1%;
+        top: 0%;
         width: 56%;
         left: 18%;
     }

@@ -18,7 +18,7 @@ export default {
       flyInTime: 500
     };
   },
-/*   created() {
+  /*   created() {
     console.log(this.cardPositions);
   }, */
   methods: {
@@ -264,7 +264,6 @@ export default {
     animation: moveRight3 0.8s forwards;
   }
 
-
   @keyframes moveRight1 {
     0% {
       left: 22%;
@@ -295,10 +294,10 @@ export default {
     }
   }
 
-.label{
-  width: 30%;
-  left:35.5%;
-}
+  .label {
+    width: 30%;
+    left: 35.5%;
+  }
   .mainCards {
     width: 56%;
     /*     top: 25%; */
@@ -327,15 +326,14 @@ export default {
   .bCard4 {
     top: 75%;
   }
-
 }
 
 @media all and (max-aspect-ratio: 520 / 600) {
   /*PORTRAIT MODE*/
-.label{
-  width: 55%;
-  left:22.5%;
-}
+  .label {
+    width: 55%;
+    left: 22.5%;
+  }
   .rSlide1 {
     animation: moveRight1 0.8s forwards;
   }
@@ -345,7 +343,9 @@ export default {
   .rSlide3 {
     animation: moveRight3 0.8s forwards;
   }
-
+  .rightS32 {
+    animation: KrightS32 0.8s forwards;
+  }
 
   @keyframes moveRight1 {
     0% {
@@ -354,6 +354,16 @@ export default {
     }
     100% {
       left: 58.5%;
+    }
+  }
+
+  @keyframes KrightS32 {
+    0% {
+      left: 58.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 39%;
     }
   }
 
@@ -441,16 +451,15 @@ export default {
   .bCard4 {
     top: 68%;
   }
- 
 }
 
 @media all and (max-aspect-ratio: 970 / 600) and (min-aspect-ratio: 520 / 600) {
   /*SQUARE (DESKTOP) MODE*/
 
-.label{
-  width: 44%;
-  left:28.725%;
-}
+  .label {
+    width: 44%;
+    left: 28.725%;
+  }
 
   .rSlide1 {
     animation: moveRight1 0.8s forwards;
@@ -461,7 +470,6 @@ export default {
   .rSlide3 {
     animation: moveRight3 0.8s forwards;
   }
-
 
   @keyframes moveRight1 {
     0% {
