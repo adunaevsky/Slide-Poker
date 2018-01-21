@@ -333,14 +333,20 @@ export default {
             this.reviewSlides[slideType] = false;
           }
         }
-
+        var revealNum = 0;
         setTimeout(() => {
           for (let s = 0; s < this.showMainCard.length; s++) {
-            setTimeout(() => {
-               if (s >= cardLimits.fCard && s <= cardLimits.lCard) {
+            if (
+              s >= cardLimits.fCard &&
+              s <= cardLimits.lCard &&
+              !this.showMainCard[s]
+            ) {
+              setTimeout(() => {
                 this.showMainCard.splice(s, 1, true);
-              }
-            }, s * 100);
+                this.playDealSound();
+              }, revealNum * 100);
+              revealNum++;
+            }
           }
         }, 800);
       }
@@ -353,6 +359,7 @@ export default {
           this.showMainCard.splice(s, 1, false);
         }
       }
+      this.playDealSound();
       return {
         lCard: lastCard,
         fCard: firstCard
@@ -496,11 +503,11 @@ export default {
     },
     determineSlide() {
       //   FOR TESTING AND DEVLOPMENT
-     //  this.slideCards("right", 3);
+     // this.slideCards("right", 3);
 
       //   FOR PRODUCTION
       var cardValues = [];
-      _.forEach(this.mCards, (a, i) => {
+          _.forEach(this.mCards, (a, i) => {
         if (i > 2 && i <= 7) {
           cardValues.push(parseInt(a.slice(1, a.length)));
         }
@@ -517,7 +524,7 @@ export default {
         } else {
           this.noSlide();
         }
-      }, 500);
+      }, 500); 
     },
     slideRight(rounds) {
       //  this.finalResults = [];
