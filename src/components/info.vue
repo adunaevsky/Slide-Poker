@@ -141,6 +141,8 @@
 /* import cashCounter from '../services/cashAnalyzer'
 import bus from '../services/bus' */
 
+/* import bus from "./../bus"; */
+
 
 export default {
     name: 'info',
@@ -278,7 +280,8 @@ export default {
             this.total.pHand = this.total.pHand + d.pPerHand;
             this.total.pRound = this.total.pRound + d.pPerRound;
         });
-    }, filters: {
+    }, 
+    filters: {
         formatNumber: function(value) {
             return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }

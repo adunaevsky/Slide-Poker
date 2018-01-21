@@ -1,51 +1,47 @@
 <template>
     <div class="mainCards">
         <!--   {{cards}} -->
-        <transition name="cardAnimation" v-for="(cardPos,index) in cardPositions">
+<!--         <transition name="cardAnimation" v-for="(cardPos,index) in cardPositions">
             <div v-if="showCard[index]" :class="[defaultClasses, cardPos, flip[index] ? 'flip' : '' ]" v-flip="cards[index]">
+              
+            </div>
+        </transition> -->
+                <transition name="cardAnimation" v-for="(cardPos,index) in cardPositions">
+            <div v-if="showCard[index]" :class="[defaultClasses, cardPos, flip[index] ? 'flip' : '' ]">
+              <div class="flipper">
+                <div class="front cBack1"></div>
+                <div :class="cardRank[index]"></div>
+              </div>
             </div>
         </transition>
     </div>
 </template>
 
 <script>
+import bus from "./../bus";
+
 export default {
   name: "mainCards",
   props: ["flip", "cards", "showCard", "cardPositions", "skipFly"],
   data() {
     return {
       defaultClasses: "cSize flip-container",
-      flyInTime: 500
+      flyInTime: 500,
+      cardRank: []
     };
   },
-  /*   created() {
-    console.log(this.cardPositions);
-  }, */
   methods: {
-    checkFlyIn(show) {
-      //  console.log(this.skipFly, show);
-      if (this.skipFly) {
-        //console.log("no fly at all! - skipped!");
-        return "";
-      }
-      if (show) {
-        // console.log("fly in animation");
-        return "cardAnimation-enter-active";
-      }
-      if (this.skipFly && !show) {
-        console.log("display none.");
-        return "cardDisppears";
-      }
+    updateCards: function() {
+      this.cardRank = [];
+      this.cards.forEach(c => {
+        this.cardRank.push("back " + c);
+      });
     }
-    /*     checkFlyOut(c) {
-      console.log(c);
-      if (!c) {
-        return "cardDisppears";
-        return "cardAnimation-leave-active";
-      } else {
-        
-      }
-    } */
+  },
+  mounted() {
+    bus.$on("cardsUpdated", () => {
+      this.updateCards();
+    });
   }
 };
 </script>
@@ -224,6 +220,188 @@ export default {
     animation: moveLeft3 0.8s forwards;
   }
 
+  .rightS32 {
+    animation: KrightS32 0.8s forwards;
+  }
+  .rightS31 {
+    animation: KrightS31 0.8s forwards;
+  }
+  .rightS30 {
+    animation: KrightS30 0.8s forwards;
+  }
+  .rightS23 {
+    animation: KrightS23 0.8s forwards;
+  }
+  .rightS21 {
+    animation: KrightS21 0.8s forwards;
+  }
+  .rightS20 {
+    animation: KrightS20 0.8s forwards;
+  }
+  .rightS13 {
+    animation: KrightS13 0.8s forwards;
+  }
+  .rightS12 {
+    animation: KrightS12 0.8s forwards;
+  }
+  .rightS10 {
+    animation: KrightS10 0.8s forwards;
+  }
+  .rightS01 {
+    animation: KrightS01 0.8s forwards;
+  }
+  .rightS02 {
+    animation: KrightS02 0.8s forwards;
+  }
+  .rightS03 {
+    animation: KrightS03 0.8s forwards;
+  }
+  .leftS32 {
+    animation: Klefts32 0.8s forwards;
+  }
+  .leftS31 {
+    animation: Klefts31 0.8s forwards;
+  }
+  .leftS30 {
+    animation: Klefts30 0.8s forwards;
+  }
+  .leftS23 {
+    animation: Klefts23 0.8s forwards;
+  }
+  .leftS21 {
+    animation: Klefts21 0.8s forwards;
+  }
+  .leftS20 {
+    animation: Klefts20 0.8s forwards;
+  }
+  .leftS13 {
+    animation: Klefts13 0.8s forwards;
+  }
+  .leftS12 {
+    animation: Klefts12 0.8s forwards;
+  }
+  .leftS10 {
+    animation: Klefts10 0.8s forwards;
+  }
+  .leftS01 {
+    animation: Klefts01 0.8s forwards;
+  }
+  .leftS02 {
+    animation: Klefts02 0.8s forwards;
+  }
+  .leftS03 {
+    animation: Klefts03 0.8s forwards;
+  }
+
+  @keyframes Klefts32 {
+    0% {
+      left: -33%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -22%;
+    }
+  }
+  @keyframes Klefts31 {
+    0% {
+      left: -33%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -11%;
+    }
+  }
+  @keyframes Klefts30 {
+    0% {
+      left: -33%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -0%;
+    }
+  }
+  @keyframes Klefts23 {
+    0% {
+      left: -22%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -33%;
+    }
+  }
+  @keyframes Klefts21 {
+    0% {
+      left: -22%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -11%;
+    }
+  }
+  @keyframes Klefts20 {
+    0% {
+      left: -22%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 0%;
+    }
+  }
+  @keyframes Klefts13 {
+    0% {
+      left: -11%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -33%;
+    }
+  }
+  @keyframes Klefts12 {
+    0% {
+      left: -11%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -22%;
+    }
+  }
+  @keyframes Klefts10 {
+    0% {
+      left: -11%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 0%;
+    }
+  }
+  @keyframes Klefts01 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -11%;
+    }
+  }
+  @keyframes Klefts02 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -22%;
+    }
+  }
+  @keyframes Klefts03 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -33%;
+    }
+  }
+
   @keyframes moveLeft1 {
     0% {
       left: 0%;
@@ -262,6 +440,115 @@ export default {
   }
   .rSlide3 {
     animation: moveRight3 0.8s forwards;
+  }
+
+  @keyframes KrightS32 {
+    0% {
+      left: 33%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 22%;
+    }
+  }
+  @keyframes KrightS31 {
+    0% {
+      left:33%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 11%;
+    }
+  }
+  @keyframes KrightS30 {
+    0% {
+      left:33%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 0%;
+    }
+  }
+  @keyframes KrightS23 {
+    0% {
+      left:22%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 33%;
+    }
+  }
+  @keyframes KrightS21 {
+    0% {
+      left:22%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:11%;
+    }
+  }
+  @keyframes KrightS20 {
+    0% {
+      left:22%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:0%;
+    }
+  }
+  @keyframes KrightS13 {
+    0% {
+      left:11%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:33%;
+    }
+  }
+  @keyframes KrightS12 {
+    0% {
+      left:11%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:22%;
+    }
+  }
+  @keyframes KrightS10 {
+    0% {
+      left:11%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:0%;
+    }
+  }
+  @keyframes KrightS01 {
+    0% {
+      left:0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 11%;
+    }
+  }
+  @keyframes KrightS02 {
+    0% {
+      left:0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 22%;
+    }
+  }
+  @keyframes KrightS03 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 33%;
+    }
   }
 
   @keyframes moveRight1 {
@@ -343,8 +630,41 @@ export default {
   .rSlide3 {
     animation: moveRight3 0.8s forwards;
   }
+  .rightS30 {
+    animation: KrightS30 0.8s forwards;
+  }
+  .rightS03 {
+    animation: KrightS03 0.8s forwards;
+  }
+  .rightS31 {
+    animation: KrightS31 0.8s forwards;
+  }
   .rightS32 {
     animation: KrightS32 0.8s forwards;
+  }
+  .rightS23 {
+    animation: KrightS23 0.8s forwards;
+  }
+  .rightS21 {
+    animation: KrightS21 0.8s forwards;
+  }
+  .rightS20 {
+    animation: KrightS20 0.8s forwards;
+  }
+  .rightS02 {
+    animation: KrightS02 0.8s forwards;
+  }
+  .rightS01 {
+    animation: KrightS01 0.8s forwards;
+  }
+  .rightS10 {
+    animation: KrightS10 0.8s forwards;
+  }
+  .rightS13 {
+    animation: KrightS13 0.8s forwards;
+  }
+  .rightS12 {
+    animation: KrightS12 0.8s forwards;
   }
 
   @keyframes moveRight1 {
@@ -357,6 +677,78 @@ export default {
     }
   }
 
+  @keyframes KrightS12 {
+    0% {
+      left: 19.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 39%;
+    }
+  }
+  @keyframes KrightS13 {
+    0% {
+      left: 19.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 58.5%;
+    }
+  }
+  @keyframes KrightS02 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 39%;
+    }
+  }
+  @keyframes KrightS10 {
+    0% {
+      left: 19.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 0%;
+    }
+  }
+  @keyframes KrightS01 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 19.5%;
+    }
+  }
+  @keyframes KrightS03 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 58.5%;
+    }
+  }
+  @keyframes KrightS30 {
+    0% {
+      left: 58.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 0%;
+    }
+  }
+  @keyframes KrightS31 {
+    0% {
+      left: 58.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 19.5%;
+    }
+  }
   @keyframes KrightS32 {
     0% {
       left: 58.5%;
@@ -364,6 +756,33 @@ export default {
     }
     100% {
       left: 39%;
+    }
+  }
+  @keyframes KrightS23 {
+    0% {
+      left: 39%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 58.5%;
+    }
+  }
+  @keyframes KrightS21 {
+    0% {
+      left: 39%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 19.5%;
+    }
+  }
+  @keyframes KrightS20 {
+    0% {
+      left: 39%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 0%;
     }
   }
 
@@ -395,6 +814,151 @@ export default {
   }
   .lSlide3 {
     animation: moveLeft3 0.8s forwards;
+  }
+
+  .leftS23 {
+    animation: KleftS23 0.8s forwards;
+  }
+  .leftS21 {
+    animation: KleftS21 0.8s forwards;
+  }
+  .leftS32 {
+    animation: KleftS32 0.8s forwards;
+  }
+  .leftS31 {
+    animation: KleftS31 0.8s forwards;
+  }
+  .leftS13 {
+    animation: KleftS13 0.8s forwards;
+  }
+  .leftS12 {
+    animation: KleftS12 0.8s forwards;
+  }
+  .leftS10 {
+    animation: KleftS10 0.8s forwards;
+  }
+  .leftS30 {
+    animation: KleftS30 0.8s forwards;
+  }
+  .leftS03 {
+    animation: KleftS03 0.8s forwards;
+  }
+  .leftS01 {
+    animation: KleftS01 0.8s forwards;
+  }
+  .leftS02 {
+    animation: KleftS02 0.8s forwards;
+  }
+  .leftS20 {
+    animation: KleftS20 0.8s forwards;
+  }
+  @keyframes KleftS23 {
+    0% {
+      left: -39%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -58.5%;
+    }
+  }
+  @keyframes KleftS32 {
+    0% {
+      left: -58.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -39%;
+    }
+  }
+  @keyframes KleftS31 {
+    0% {
+      left: -58.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -19.5%;
+    }
+  }
+  @keyframes KleftS13 {
+    0% {
+      left: -19.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -58.5%;
+    }
+  }
+  @keyframes KleftS10 {
+    0% {
+      left: -19.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 0%;
+    }
+  }
+  @keyframes KleftS12 {
+    0% {
+      left: -19.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -39%;
+    }
+  }
+  @keyframes KleftS30 {
+    0% {
+      left: -58.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 0%;
+    }
+  }
+  @keyframes KleftS03 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -58.5%;
+    }
+  }
+  @keyframes KleftS01 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -19.5%;
+    }
+  }
+  @keyframes KleftS02 {
+    0% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -39%;
+    }
+  }
+  @keyframes KleftS21 {
+    0% {
+      left: -39%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -19.5%;
+    }
+  }
+  @keyframes KleftS20 {
+    0% {
+      left: -39%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 0%;
+    }
   }
 
   @keyframes moveLeft1 {
@@ -471,6 +1035,191 @@ export default {
     animation: moveRight3 0.8s forwards;
   }
 
+  .rightS32 {
+    animation: KrightS32 0.8s forwards;
+  }
+  .rightS31 {
+    animation: KrightS31 0.8s forwards;
+  }
+  .rightS30 {
+    animation: KrightS30 0.8s forwards;
+  }
+  .rightS23 {
+    animation: KrightS23 0.8s forwards;
+  }
+  .rightS21 {
+    animation: KrightS21 0.8s forwards;
+  }
+  .rightS20 {
+    animation: KrightS20 0.8s forwards;
+  }
+  .rightS13 {
+    animation: KrightS13 0.8s forwards;
+  }
+  .rightS12 {
+    animation: KrightS12 0.8s forwards;
+  }
+  .rightS10 {
+    animation: KrightS10 0.8s forwards;
+  }
+  .rightS01 {
+    animation: KrightS01 0.8s forwards;
+  }
+  .rightS02 {
+    animation: KrightS02 0.8s forwards;
+  }
+  .rightS03 {
+    animation: KrightS03 0.8s forwards;
+  }
+  .leftS32 {
+    animation: Klefts32 0.8s forwards;
+  }
+  .leftS31 {
+    animation: Klefts31 0.8s forwards;
+  }
+  .leftS30 {
+    animation: Klefts30 0.8s forwards;
+  }
+  .leftS23 {
+    animation: Klefts23 0.8s forwards;
+  }
+  .leftS21 {
+    animation: Klefts21 0.8s forwards;
+  }
+  .leftS20 {
+    animation: Klefts20 0.8s forwards;
+  }
+  .leftS13 {
+    animation: Klefts13 0.8s forwards;
+  }
+  .leftS12 {
+    animation: Klefts12 0.8s forwards;
+  }
+  .leftS10 {
+    animation: Klefts10 0.8s forwards;
+  }
+  .leftS01 {
+    animation: Klefts01 0.8s forwards;
+  }
+  .leftS02 {
+    animation: Klefts02 0.8s forwards;
+  }
+  .leftS03 {
+    animation: Klefts03 0.8s forwards;
+  }
+
+
+ @keyframes KrightS32 {
+    0% {
+      left:37.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 21.5%;
+    }
+  }
+@keyframes KrightS31 {
+    0% {
+      left:37.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 5.5%;
+    }
+  }
+  @keyframes KrightS30 {
+    0% {
+      left: 37.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:-10%;
+    }
+  }
+  @keyframes KrightS23 {
+    0% {
+      left: 21.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:37.5%;
+    }
+  }
+  @keyframes KrightS21 {
+    0% {
+      left: 21.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 5.5%;
+    }
+  }
+  @keyframes KrightS20 {
+    0% {
+      left: 21.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:-10%;
+    }
+  }
+  @keyframes KrightS13 {
+    0% {
+      left:5.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 37.5%;
+    }
+  }
+  @keyframes KrightS12 {
+    0% {
+      left:5.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:  21.5%;
+    }
+  }
+  @keyframes KrightS10 {
+    0% {
+      left:5.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -10%;
+    }
+  }
+  @keyframes KrightS01 {
+    0% {
+      left: -10%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: 5.5%;
+    }
+  }
+  @keyframes KrightS02 {
+    0% {
+      left: -10%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:  21.5%;
+    }
+  }
+  @keyframes KrightS03 {
+    0% {
+      left: -10%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left:37.5%;
+    }
+  }
+  
+
+
   @keyframes moveRight1 {
     0% {
       left: 21.5%;
@@ -509,6 +1258,115 @@ export default {
   }
   .lSlide3 {
     animation: moveLeft3 0.8s forwards;
+  }
+
+  @keyframes Klefts32 {
+    0% {
+      left: -56.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -41%;
+    }
+  }
+  @keyframes Klefts31 {
+    0% {
+      left: -56.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -25.5%;
+    }
+  }
+  @keyframes Klefts30 {
+    0% {
+      left: -56.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -10%;
+    }
+  }
+  @keyframes Klefts23 {
+    0% {
+      left: -41%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -56.5%;
+    }
+  }
+  @keyframes Klefts21 {
+    0% {
+      left: -41%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -25.5%;
+    }
+  }
+  @keyframes Klefts20 {
+    0% {
+      left: -41%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -10%;
+    }
+  }
+  @keyframes Klefts13 {
+    0% {
+      left: -25.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -56.5%;
+    }
+  }
+  @keyframes Klefts12 {
+    0% {
+      left: -25.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -41%;
+    }
+  }
+  @keyframes Klefts10 {
+    0% {
+      left: -25.5%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -10%;
+    }
+  }
+  @keyframes Klefts01 {
+    0% {
+      left: -10%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -25.5%;
+    }
+  }
+  @keyframes Klefts02 {
+    0% {
+      left: -10%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -41%;
+    }
+  }
+  @keyframes Klefts03 {
+    0% {
+      left: -10%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      left: -56.5%;
+    }
   }
 
   @keyframes moveLeft1 {

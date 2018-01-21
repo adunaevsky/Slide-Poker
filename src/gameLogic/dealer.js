@@ -173,6 +173,15 @@ class dealerPerson {
 
     }
 
+ /*    temCard = '';
+    tempRemoveCard(cardNum){
+        this.temCard = this.mainCards[cardNum];
+        this.mainCards[cardNum] = '';
+    }
+    tempRestoreCard(cardNum){
+        this.mainCards[cardNum] = this.temCard;
+    } */
+
 
     newDeck() {
        /*  this.MDCard = false; */

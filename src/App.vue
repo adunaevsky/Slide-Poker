@@ -10,8 +10,8 @@
 
     <cash-display v-bind:MDBet="cash.MDBet" v-bind:baseBet="cash.baseBet" v-bind:bal="cash.balance" v-bind:win="cash.win" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
 
-    <div id="mainCards" class="cardArea" :class="{lSlide1:slide.left[0], lSlide2:slide.left[1], lSlide3:slide.left[2], rSlide1:slide.right[0], rSlide2:slide.right[1], rSlide3:slide.right[2]}" >
-      <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:multiplyNum="getNumPayMultiply()" v-bind:skipFly="skipFlyIn"></main-cards>
+    <div id="mainCards" class="cardArea" :class="slideSpecs">
+      <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:skipFly="skipFlyIn"></main-cards>
     </div>
 
     <div id="holdButtons" class="cardArea" :class="slideSpecs" >
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-      <div class="cardArea"   v-for="(r,index) in finalResults"  :class="[getTopShift(index)]" >
+      <div class="cardArea"   v-for="(r,index) in finalResults"  :class="topShiftClass[index]" >
         <div v-if="stage.multiResults" style="position: absolute;" class="label">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 91 12"   @click="reviewCards(index)">
             <rect :fill="r.fill" style="stroke:#bababa; stroke-miterlimit:10;" x="1" y="1" rx="2" width="89" height="10" :opacity="reviewHand[index] === true ? 1 : 0.7" />
@@ -286,33 +286,77 @@ export default {
         leftS01: false,
         leftS02: false,
         leftS03: false
+      },
+      slideOptions: {
+        right: [3, 2, 1, 0],
+        left: [3, 4, 5, 6]
       }
     };
   },
   computed: {
     slideSpecs: function() {
-      return {
-        lSlide1: this.slide.left[0],
-        lSlide2: this.slide.left[1],
-        lSlide3: this.slide.left[2],
-        rSlide1: this.slide.right[0],
-        rSlide2: this.slide.right[1],
-        rSlide3: this.slide.right[2]
-      };
+      var result = {};
+      result.lSlide1 = this.slide.left[0];
+      result.lSlide2 = this.slide.left[1];
+      result.lSlide3 = this.slide.left[2];
+      result.rSlide1 = this.slide.right[0];
+      result.rSlide2 = this.slide.right[1];
+      result.rSlide3 = this.slide.right[2];
+
+      for (var slideType in this.reviewSlides) {
+        result[slideType] = this.reviewSlides[slideType];
+      }
+
+      //  console.log(result)
+
+      return result;
     }
   },
   methods: {
-    reviewCards(i) {
-      var currentHand = this.reviewHand.indexOf(true);
-      this.updateActiveHand(i);
-      var newHand = this.reviewHand.indexOf(true);
-      var slideClass = this.originalSlide + "S" + currentHand + newHand;
+    reviewCards(n) {
+      for (var i = 0; i < this.slide[this.originalSlide].length; i++) {
+        this.slide[this.originalSlide].splice(i, 1, false);
+      }
 
-      console.log(slideClass);
-      /*    console.log(this.originalSlide);
-      if(this.originalSlide === 'right'){
-        this.doSlide(1, "left");
-      } */
+      var currentHand = this.reviewHand.indexOf(true);
+      this.updateActiveHand(n);
+      var newHand = this.reviewHand.indexOf(true);
+
+      if (currentHand !== newHand) {
+        var slideClass = this.originalSlide + "S" + currentHand + newHand;
+        var cardLimits = this.removeRevCards(newHand);
+
+        for (var slideType in this.reviewSlides) {
+          if (slideClass === slideType) {
+            this.reviewSlides[slideType] = true;
+          } else {
+            this.reviewSlides[slideType] = false;
+          }
+        }
+
+        setTimeout(() => {
+          for (let s = 0; s < this.showMainCard.length; s++) {
+            setTimeout(() => {
+               if (s >= cardLimits.fCard && s <= cardLimits.lCard) {
+                this.showMainCard.splice(s, 1, true);
+              }
+            }, s * 100);
+          }
+        }, 800);
+      }
+    },
+    removeRevCards(handNum) {
+      var firstCard = this.slideOptions[this.originalSlide][handNum],
+        lastCard = firstCard + 4;
+      for (var s = 0; s < this.showMainCard.length; s++) {
+        if (s < firstCard || s > lastCard) {
+          this.showMainCard.splice(s, 1, false);
+        }
+      }
+      return {
+        lCard: lastCard,
+        fCard: firstCard
+      };
     },
     updateActiveHand(i) {
       for (var s = 0; s < this.reviewHand.length; s++) {
@@ -335,15 +379,6 @@ export default {
         return x;
       }
       return "$" + x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    },
-    getTopShift(i) {
-      return this.topShiftClass[i];
-    },
-    /*     getNumBonusCards() {
-      return dealer.numBonusCards;
-    }, */
-    getNumPayMultiply() {
-      return dealer.numPayMultiply;
     },
     getHeldCards() {
       return this.holds.map(c => {
@@ -384,6 +419,8 @@ export default {
       }
     },
     swapUnheldCards() {
+      // console.log('swapping??', this.holds)
+
       var cardsRemoved = 0,
         totalRemove = 0,
         removedCardsIndex = [];
@@ -391,11 +428,14 @@ export default {
         if (i < 8 && i > 2) {
           if (i === 3) {
             a.forEach((a, s) => {
-              if (s < 4 && !a.active) {
+              if (s > 2 && !a.active && s <= 7) {
                 totalRemove++;
+                // console.log(totalRemove);
               }
             });
+            // console.log(totalRemove);
             if (totalRemove === 0) {
+              //  console.log('got here. 1');
               this.determineSlide();
               // this.completeGameRound();
             }
@@ -406,7 +446,8 @@ export default {
             setTimeout(() => {
               this.showMainCard.splice(i, 1, false);
 
-              dealer.swapCard(i);
+              dealer.swapCard(i); /* *** */
+              bus.$emit("cardsUpdated");
               this.playDealSound();
               setTimeout(() => {
                 this.mainFlip.splice(i, 1, false);
@@ -454,9 +495,8 @@ export default {
       }
     },
     determineSlide() {
-   
       //   FOR TESTING AND DEVLOPMENT
-    //  this.slideCards("left", 2);
+     //  this.slideCards("right", 3);
 
       //   FOR PRODUCTION
       var cardValues = [];
@@ -500,21 +540,23 @@ export default {
 
           setTimeout(() => {
             dealer.getCard(2 - i);
+            bus.$emit("cardsUpdated");
             this.mainFlip.splice(2 - i, 1, true);
 
-            this.finalResults.push(
-              finalResults.fiveCards(this.mCards.slice(2 - i, 7 - i))
-            );
-            this.finalResults[i + 1].reward = this.recordReward(
-              this.finalResults[i + 1]
-            );
+            setTimeout(() => {
+              this.finalResults.push(
+                finalResults.fiveCards(this.mCards.slice(2 - i, 7 - i))
+              );
+              this.finalResults[i + 1].reward = this.recordReward(
+                this.finalResults[i + 1]
+              );
+            }, 500);
+
             this.updateActiveHand(i + 1);
             this.playDealSound();
             if (i === rounds - 1) {
               this.stage.results = true;
               this.completeGameRound();
-
-              // console.log(this.finalResults);
             }
           }, 1800);
         }, 300 + i * 3700);
@@ -533,7 +575,7 @@ export default {
           this.showMainCard.splice(i + 3, 1, false);
           this.holds[i + 3].display = false;
 
-          this.doSlide(i, 'left');
+          this.doSlide(i, "left");
           setTimeout(() => {
             this.showMainCard.splice(8 + i, 1, true);
             this.playDealSound();
@@ -541,16 +583,21 @@ export default {
 
           setTimeout(() => {
             dealer.getCard(8 + i);
+            bus.$emit("cardsUpdated");
             this.mainFlip.splice(8 + i, 1, true);
-            this.finalResults.push(
-              finalResults.fiveCards(this.mCards.slice(i + 4, i + 9))
-            );
-            this.finalResults[i + 1].reward = this.recordReward(
-              this.finalResults[i + 1]
-            );
+
+            setTimeout(() => {
+              this.finalResults.push(
+                finalResults.fiveCards(this.mCards.slice(i + 4, i + 9))
+              );
+              this.finalResults[i + 1].reward = this.recordReward(
+                this.finalResults[i + 1]
+              );
+            }, 500);
+
             this.updateActiveHand(i + 1);
             this.playDealSound();
-            this.updateActiveHand(i);
+
             if (i === rounds - 1) {
               this.stage.results = true;
               this.completeGameRound();
@@ -631,6 +678,7 @@ export default {
           //  console.log('got here.', i,'swapComplete: ', swapComplete)
           if (this.mCards[c] === "") {
             dealer.getCard(c);
+            bus.$emit("cardsUpdated");
           }
           setTimeout(() => {
             this.mainFlip.splice(c, 1, true);
@@ -659,7 +707,7 @@ export default {
       });
     }, */
     completeGameRound() {
-     // console.log("completeGameRound??", this.finalResults);
+      // console.log("completeGameRound??", this.finalResults);
 
       this.analyzeCash();
 
