@@ -503,11 +503,11 @@ export default {
     },
     determineSlide() {
       //   FOR TESTING AND DEVLOPMENT
-     // this.slideCards("right", 3);
+      // this.slideCards("right", 3);
 
       //   FOR PRODUCTION
       var cardValues = [];
-          _.forEach(this.mCards, (a, i) => {
+      _.forEach(this.mCards, (a, i) => {
         if (i > 2 && i <= 7) {
           cardValues.push(parseInt(a.slice(1, a.length)));
         }
@@ -524,7 +524,7 @@ export default {
         } else {
           this.noSlide();
         }
-      }, 500); 
+      }, 500);
     },
     slideRight(rounds) {
       //  this.finalResults = [];
@@ -648,6 +648,10 @@ export default {
     reset() {
       this.soundClearCards.play();
 
+         for (var slideType in this.reviewSlides) {
+        this.reviewSlides[slideType] = false;
+      }
+
       dealer.newDeck();
       this.skipFlyIn = false;
       this.finalResults = [];
@@ -703,7 +707,8 @@ export default {
           initialDelay = initialDelay + 100;
         }
       });
-      //console.log(dealer.mainCards);
+
+   
     },
     /*  setHolds() {
       var hold = getHolds.setHolds(dealer.mainCards);
