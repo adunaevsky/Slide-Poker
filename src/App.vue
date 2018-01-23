@@ -31,18 +31,20 @@
       <div class="cardArea"   v-for="(r,index) in finalResults"  :class="topShiftClass[index]" >
         <div v-if="stage.multiResults" style="position: absolute;" class="label">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 91 12"   @click="reviewCards(index)">
-            <rect :fill="r.fill" style="stroke:#bababa; stroke-miterlimit:10;" x="1" y="1" rx="2" width="89" height="10" :opacity="reviewHand[index] === true ? 1 : 0.7" />
-            <text v-if="r.rank > 0" class="payTableText" text-anchor="left" font-weight="bold" font-size="6" x="5" y="8.5" fill="#ffffff"  :opacity="reviewHand[index] === true ? 1 : 0.7">
+            <rect :fill="r.fill" style="stroke:#bababa; stroke-miterlimit:10;" x="1" y="1" rx="2" width="89" height="10" :opacity="reviewHand[index] === true ? 1 : 0.4" />
+            <text v-if="r.rank > 0" class="payTableText" text-anchor="left" font-weight="bold" font-size="6" x="5" y="8.5" fill="#ffffff"  :opacity="reviewHand[index] === true ? 1 : 0.4">
               {{r.label}}</text>
-            <text v-if="r.rank === 0" class="payTableText" text-anchor="middle" font-weight="bold" font-size="7" x="45" y="8.5" fill="#ffffff" :opacity="reviewHand[index] === true ? 1 : 0.7">
+            <text v-if="r.rank === 0" class="payTableText" text-anchor="middle" font-weight="bold" font-size="7" x="45" y="8.5" fill="#ffffff" :opacity="reviewHand[index] === true ? 1 : 0.4">
               {{r.label}}</text>
-            <text v-if="r.rank > 0" class="labelCash payTableText" text-anchor="end" font-weight="bold" font-size="7" x="85" y="8.5" fill="#02F53A"  :opacity="reviewHand[index] === true ? 1 : 0.7">
+            <text v-if="r.rank > 0" class="labelCash payTableText" text-anchor="end" font-weight="bold" font-size="7" x="85" y="8.5" fill="#02F53A"  :opacity="reviewHand[index] === true ? 1 : 0.4">
               {{dollarFormat(r.reward)}}
             </text>
           </svg>
         </div>
       </div>
 
+<tap-labels v-if="stage.results && stage.animationDone && !stage.singleResult"></tap-labels>
+<slide-btns v-if="stage.slideChoice"  v-on:slideRight="slideChoice('right')" v-on:slideLeft="slideChoice('left')"/>
 
     <div id="singleResult" class="singleResult" v-if="stage.singleResult">
 
@@ -73,6 +75,30 @@
       </div>
 
     </div>
+
+
+
+<!-- FOR TESTING (start) -->
+     <!--    <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
+            <span v-if="option.autohold">☑</span>
+            <span v-if="!option.autohold">☐</span>
+            Auto hold
+            <span v-if="!option.autohold"> is OFF</span>
+            <span v-if="option.autohold"> is ON</span>
+          </button> -->
+          <select v-model="selectedTest" style="position:absolute; bottom:0.5%; left: 10.5rem; width: 10rem;">
+            <option v-for="o in testScenarios" :value="o.cards">{{o.desc}}</option>
+          </select>
+         <!--  <div v-if="holdReason !== ''" style="position:absolute; bottom:0.5%; left: 20.5rem; font-size:1rem; cursor: pointer; color: lightyellow; background:  rgba(0, 0, 0, 0.5); padding: 0.5rem; padding-bottom: 0rem; ">
+            <b>Hold reason: </b>
+            {{holdReason}}
+
+          </div> -->
+
+
+<!-- FOR TESTING (end) -->
+
+
 
 <!--  <button v-if="stage.showSlideBtns" @click="slideCards('left')" style="position:absolute; bottom:0%; width: 10em; font-size:1em; cursor: pointer;">slide LEFT</button>
  <button v-if="stage.showSlideBtns" @click="slideCards('right')" style="position:absolute; bottom:0%; width: 10em; left:10em; font-size:1em; cursor: pointer;">slide RIGHT</button>
@@ -153,11 +179,16 @@ import btnLeftBet from "./components/btnLeftBet";
 import mainCards from "./components/cards";
 import bonusCards from "./components/bonusCards";
 import payTable from "./components/payTable";
+import slideBtns from "./components/slideBtns";
 import dealerPerson from "./gameLogic/dealer";
 import handResult from "./gameLogic/handResult";
-import autoHolder from "./gameLogic/autoHolder";
+
 import info from "./components/info";
 import again from "./components/playAgain";
+import tapLabels from "./components/tapLabels";
+
+import autoHolder from "./gameLogic/autoHolder";
+import tests from "./gameLogic/testCases";
 
 var finalResults = new handResult();
 var getHolds = new autoHolder();
@@ -198,10 +229,18 @@ export default {
     bonusCards,
     payTable,
     info,
-    again
+    again,
+    tapLabels,
+    slideBtns
   },
   data() {
     return {
+      testScenarios: tests,
+      selectedTest: tests[0].cards,
+      option: {
+        autohold: false,
+        autoplay: false
+      },
       infoBoxOpen: false,
       stage: {
         newRound: true,
@@ -211,7 +250,9 @@ export default {
         draw: false,
         singleResult: false,
         multiResults: false,
-        showSlideBtns: false
+        showSlideBtns: false,
+        animationDone: true,
+        slideChoice: false
       },
       slide: {
         left: [false, false, false],
@@ -230,10 +271,7 @@ export default {
         MD_coin_cost: 5,
         base_coin_cost: 5
       },
-      option: {
-        autohold: false,
-        autoplay: false
-      },
+
       holdReason: "",
       defaultClasses: "cSize flip-container",
       topShiftClass: ["bCard1", "bCard2", "bCard3", "bCard4"],
@@ -314,41 +352,49 @@ export default {
   },
   methods: {
     reviewCards(n) {
-      for (var i = 0; i < this.slide[this.originalSlide].length; i++) {
-        this.slide[this.originalSlide].splice(i, 1, false);
-      }
+      if (this.stage.results && this.stage.animationDone) {
+        var currentHand = this.reviewHand.indexOf(true);
+        this.updateActiveHand(n);
+        var newHand = this.reviewHand.indexOf(true);
 
-      var currentHand = this.reviewHand.indexOf(true);
-      this.updateActiveHand(n);
-      var newHand = this.reviewHand.indexOf(true);
-
-      if (currentHand !== newHand) {
-        var slideClass = this.originalSlide + "S" + currentHand + newHand;
-        var cardLimits = this.removeRevCards(newHand);
-
-        for (var slideType in this.reviewSlides) {
-          if (slideClass === slideType) {
-            this.reviewSlides[slideType] = true;
-          } else {
-            this.reviewSlides[slideType] = false;
+        if (currentHand !== newHand) {
+          this.stage.animationDone = false;
+          for (var i = 0; i < this.slide[this.originalSlide].length; i++) {
+            this.slide[this.originalSlide].splice(i, 1, false);
           }
-        }
-        var revealNum = 0;
-        setTimeout(() => {
-          for (let s = 0; s < this.showMainCard.length; s++) {
-            if (
-              s >= cardLimits.fCard &&
-              s <= cardLimits.lCard &&
-              !this.showMainCard[s]
-            ) {
-              setTimeout(() => {
-                this.showMainCard.splice(s, 1, true);
-                this.playDealSound();
-              }, revealNum * 100);
-              revealNum++;
+
+          var slideClass = this.originalSlide + "S" + currentHand + newHand;
+          var cardLimits = this.removeRevCards(newHand);
+
+          for (var slideType in this.reviewSlides) {
+            if (slideClass === slideType) {
+              this.reviewSlides[slideType] = true;
+            } else {
+              this.reviewSlides[slideType] = false;
             }
           }
-        }, 800);
+          var revealNum = 0;
+          setTimeout(() => {
+            for (let s = 0; s < this.showMainCard.length; s++) {
+              if (
+                s >= cardLimits.fCard &&
+                s <= cardLimits.lCard &&
+                !this.showMainCard[s]
+              ) {
+                setTimeout(() => {
+                  this.showMainCard.splice(s, 1, true);
+                  this.playDealSound();
+                }, revealNum * 100);
+                revealNum++;
+              }
+              if (s === this.showMainCard.length - 1) {
+                setTimeout(() => {
+                  this.stage.animationDone = true;
+                }, revealNum * 100);
+              }
+            }
+          }, 800);
+        }
       }
     },
     removeRevCards(handNum) {
@@ -513,7 +559,15 @@ export default {
         }
       });
       setTimeout(() => {
-        if (cardValues[0] === cardValues[1]) {
+        if (
+          (cardValues[0] === cardValues[1] &&
+            cardValues[3] === cardValues[4]) ||
+          (cardValues[0] === cardValues[1] &&
+            cardValues[2] === cardValues[3]) ||
+          (cardValues[1] === cardValues[2] && cardValues[3] === cardValues[4])
+        ) {
+          this.stage.slideChoice = true;
+        } else if (cardValues[0] === cardValues[1]) {
           this.slideCards("right", 3);
         } else if (cardValues[3] === cardValues[4]) {
           this.slideCards("left", 3);
@@ -525,6 +579,31 @@ export default {
           this.noSlide();
         }
       }, 500);
+    },
+    slideChoice(direction) {
+      this.stage.slideChoice = false;
+
+       var cardValues = [];
+      _.forEach(this.mCards, (a, i) => {
+        if (i > 2 && i <= 7) {
+          cardValues.push(parseInt(a.slice(1, a.length)));
+        }
+      });
+   
+      if (direction === "left") {
+        if (cardValues[3] === cardValues[4]) {
+          this.slideCards("left", 3);
+        } else if (cardValues[2] === cardValues[3]) {
+          this.slideCards("left", 2);
+        }
+      }
+      if (direction === "right") {
+        if (cardValues[0] === cardValues[1]) {
+          this.slideCards("right", 3);
+        } else if (cardValues[1] === cardValues[2]) {
+          this.slideCards("right", 2);
+        }
+      }
     },
     slideRight(rounds) {
       //  this.finalResults = [];
@@ -546,7 +625,7 @@ export default {
           }, 1500);
 
           setTimeout(() => {
-            dealer.getCard(2 - i);
+            dealer.getCard(2 - i, []);
             bus.$emit("cardsUpdated");
             this.mainFlip.splice(2 - i, 1, true);
 
@@ -589,7 +668,7 @@ export default {
           }, 1500);
 
           setTimeout(() => {
-            dealer.getCard(8 + i);
+            dealer.getCard(8 + i, []);
             bus.$emit("cardsUpdated");
             this.mainFlip.splice(8 + i, 1, true);
 
@@ -648,7 +727,7 @@ export default {
     reset() {
       this.soundClearCards.play();
 
-         for (var slideType in this.reviewSlides) {
+      for (var slideType in this.reviewSlides) {
         this.reviewSlides[slideType] = false;
       }
 
@@ -688,7 +767,8 @@ export default {
         if (i <= a.length - 1) {
           //  console.log('got here.', i,'swapComplete: ', swapComplete)
           if (this.mCards[c] === "") {
-            dealer.getCard(c);
+            dealer.getCard(c, this.selectedTest, "mainCards");
+            /*  dealer.getCard(c); */
             bus.$emit("cardsUpdated");
           }
           setTimeout(() => {
@@ -707,8 +787,6 @@ export default {
           initialDelay = initialDelay + 100;
         }
       });
-
-   
     },
     /*  setHolds() {
       var hold = getHolds.setHolds(dealer.mainCards);

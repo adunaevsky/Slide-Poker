@@ -1,8 +1,8 @@
 <template>
-    <div class="again">
-         <svg @click="deal()" class="againImg noSelect" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20">
-            <text text-anchor="middle" class="againText glow" font-weight="bold" font-size="8" x="50" y="8" fill="#D7522D" >
-               Play Again!</text>
+    <div class="tapLbl">
+         <svg class="tapImg noSelect" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20">
+            <text text-anchor="middle" class="tapText" font-weight="bold" font-size="6" x="50" y="8" fill="#498e00" >
+               Tap Labels</text>
         </svg>
 
     </div>
@@ -11,36 +11,33 @@
 
 <script>
 export default {
-    name: 'playAgain',
+    name: 'tapLabels',
     methods: {
-    deal: function() {
-      this.$emit("deal");
-    }
+
     }
 }
 
 </script>
 
-<style>
+<style scoped>
 
-.againText {
+.tapText {
 
     paint-order: stroke;
     stroke: #ffffff;
    /*  fill: #ffffff; */
-    stroke-width: 2px;
+    stroke-width: 1px;
     stroke-linecap: round;
     stroke-linejoin: round;
     font-weight: 800;
     font-family: Arial, Helvetica;
 }
 
-.again {
+.tapLbl {
     position: relative;
 }
 
-.againImg {
-    cursor: pointer;
+.tapImg {
     width: 100%;
     position: absolute;
 }
@@ -76,8 +73,8 @@ export default {
 
 @media all and (min-aspect-ratio: 970 / 600) {
     /*LANDSCAPE MODE*/
-    .again {
-        top: 88%;
+    .tapLbl {
+        top: 82.5%;
         width: 28%;
         left: 37%;
         /*  margin: 0 auto; */
@@ -86,8 +83,8 @@ export default {
 
 @media all and (max-aspect-ratio: 520 / 600) {
     /*PORTRAIT MODE*/
-    .again {
-         top: 82.5%;
+    .tapLbl {
+         top: 72.5%;
         width: 55%;
         left: 22.5%;
     }
@@ -95,8 +92,8 @@ export default {
 
 @media all and (max-aspect-ratio: 970 / 600) and (min-aspect-ratio: 520 / 600) {
     /*SQUARE (DESKTOP) MODE*/
-    .again {
-        top: 83%;
+    .tapLbl {
+        top: 78%;
         width: 36%;
         left: 21%;
     }

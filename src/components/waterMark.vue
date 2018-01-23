@@ -2,26 +2,32 @@
 
       <svg class="waterMark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
 
-            <text text-anchor="end" font-weight="bold" font-size="6.3" x="43" y="12" fill="#FFFFFF" :opacity="opacity">
-                EPIC RETURN</text>
+            <text text-anchor="middle" font-weight="bold" font-size="7" x="50" y="6" fill="#FFFFFF" :opacity="opacity">
+                SLIDE BONUS WITH
+                </text>
+            <text text-anchor="middle" font-weight="bold" font-size="7" x="50" y="13" fill="#FFFFFF" :opacity="opacity">
+                ANY ADJACENT PAIRS
+                </text>
             <text text-anchor="end" font-weight="bold" font-size="6.3" x="43" y="30" fill="#FFFFFF" :opacity="opacity">
-                MEGA WIN</text>
+                EPIC RETURN</text>
+           <!--  <text text-anchor="end" font-weight="bold" font-size="6.3" x="43" y="30" fill="#FFFFFF" :opacity="opacity">
+                MEGA WIN</text> -->
             <text text-anchor="end" font-weight="bold" font-size="6.3" x="43" y="48" fill="#FFFFFF" :opacity="opacity">
                 HUGE WIN</text>
 
-                <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="12" fill="#FFFFFF" :opacity="opacity">
+                <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="30" fill="#FFFFFF" :opacity="opacity">
                 96.38%</text>
 
-                <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="30" fill="#FFFFFF" :opacity="opacity">
-                +5</text>
+                <!-- <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="30" fill="#FFFFFF" :opacity="opacity">
+                +5</text> -->
 
-                 <text text-anchor="start" font-weight="bold" font-size="4.5" x="67" y="30" fill="#FFFFFF" :opacity="opacity">
-                EXTRA CARDS</text>
+                <!--  <text text-anchor="start" font-weight="bold" font-size="4.5" x="67" y="30" fill="#FFFFFF" :opacity="opacity">
+                EXTRA CARDS</text> -->
 
                 <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="48" fill="#FFFFFF" :opacity="opacity">
-                x3</text>
+                x10</text>
 
-                 <text text-anchor="start" font-weight="bold" font-size="4.5" x="74" y="48" fill="#FFFFFF" :opacity="opacity">
+                 <text text-anchor="start" font-weight="bold" font-size="4.5" x="72.5" y="48" fill="#FFFFFF" :opacity="opacity">
                 MULTIPLIER</text>
             
 
