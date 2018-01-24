@@ -22,9 +22,11 @@ class dealerPerson {
         if (typeof testCase === 'object' && cardTypes === 'mainCards' && testCase.length > 0) {
 
             this.mainCards[cardNum] = testCase[cardNum - 3];
-            // console.log(this.deck);
+           
             var cardInDeck = this.deck.indexOf(this.mainCards[cardNum]);
             this.deck.splice(cardInDeck, 1);
+
+           //  console.log(cardInDeck, this.deck.length, this.mainCards, testCase, cardNum - 3, cardNum);
 
         } else {
             var cardsInDeck = this.deck.length;

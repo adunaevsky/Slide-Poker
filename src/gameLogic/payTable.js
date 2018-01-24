@@ -1,7 +1,7 @@
 var tableValues = [{
     text: 'Royal Flush',
     clr: '#E2172D',
-    reward: 1000
+    reward: 800
 }, {
     text: 'Straight Flush',
     clr: '#E7681B',

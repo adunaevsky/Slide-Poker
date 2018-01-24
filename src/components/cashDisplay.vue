@@ -15,12 +15,12 @@
             <text text-anchor="end" font-weight="bold" font-size="9" x="43" y="8.5" fill="#FFFFFF" opacity="0.8">
                 BAL</text>
             <text text-anchor="middle" font-weight="bold" font-size="9" x="73" y="8.5" fill="#FFFFFF" opacity="1">
-                {{dollarFormat(bal)}}</text>
+                {{dollarFormat(cash.balance)}}</text>
 
             <text text-anchor="end" font-weight="bold" font-size="9" x="43" y="20.5" fill="#FFFFFF" opacity="0.8">
                 BET</text>
             <text text-anchor="middle" font-weight="bold" font-size="9" x="73" y="20.5" fill="#FFFFFF" opacity="1">
-                {{dollarFormat(baseBet)}} + {{dollarFormat(MDBet)}}</text>
+                {{dollarFormat(cash.baseBet)}} + {{dollarFormat(cash.MDBet)}}</text>
 
             <text text-anchor="end" font-weight="bold" font-size="9" x="43" y="32.5" fill="#FFFFFF" opacity="0.8">
                 WIN</text>
@@ -44,89 +44,129 @@
 </template>
 
 <script>
-
+import bus from "./../bus";
 export default {
-    name: 'cashDisplay',
-    props: ['baseBet', 'MDBet', 'bal', 'win', 'showValue'],
-    data() {
-        return {
-            winDisplayed: 0
+  name: "cashDisplay",
+  props: ["cash", "showValue"],
+  /*    props: ['baseBet', 'MDBet', 'bal', 'win', 'showValue'], */
+  data() {
+    return {
+      winDisplayed: 0
+    };
+  },
+  watch: {
+    /*  showValue: function(value) {
+      if (value) {
+        if (this.win > 0) {
+          var cashCounter = setInterval(() => {
+            if (this.cash.win - this.winDisplayed >= 1000) {
+              this.winDisplayed = this.winDisplayed + 995;
+            }
+            if (this.cash.win - this.winDisplayed >= 100) {
+              this.winDisplayed = this.winDisplayed + 95;
+            }
+            if (this.cash.win - this.winDisplayed >= 10) {
+              this.winDisplayed = this.winDisplayed + 5;
+            }
+            if (this.cash.win - this.winDisplayed >= 1) {
+              this.winDisplayed++;
+            }
+            if (this.winDisplayed === this.win) {
+              clearInterval(cashCounter);
+              if (this.win >= this.baseBet) {
+                this.$emit("playWin");
+              }
+            }
+          }, 30);
+        } else {
+          this.winDisplayed = 0;
+          this.$emit("endRound");
         }
+      } else {
+        this.winDisplayed = 0;
+      }
+    } */
+  },
+  methods: {
+    dollarFormat: function(x) {
+      if (x === "") {
+        return x;
+      }
+      return "$" + x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
-    watch: {
-        showValue: function(value) {
+    updateDisplay() {
+       // console.log(this.cash, this.cash.win);
+      if (this.cash.win > 0) {
+          this.winDisplayed = 0;
+        var cashCounter = setInterval(() => {
+          if (this.cash.win - this.winDisplayed >= 1000) {
+            this.winDisplayed = this.winDisplayed + 995;
+          }
+          if (this.cash.win - this.winDisplayed >= 100) {
+            this.winDisplayed = this.winDisplayed + 95;
+          }
+          if (this.cash.win - this.winDisplayed >= 10) {
+            this.winDisplayed = this.winDisplayed + 5;
+          }
+          if (this.cash.win - this.winDisplayed >= 1) {
+            this.winDisplayed++;
+          }
+   
+          if (this.winDisplayed === this.cash.win) {
+        
+            if (this.cash.win >= this.cash.baseBet) {
 
-            if (value) {
-                if (this.win > 0) {
-                    var cashCounter = setInterval(() => {
-                        if (this.win - this.winDisplayed >= 1000) {
-                            this.winDisplayed = this.winDisplayed + 995;
-                        }
-                        if (this.win - this.winDisplayed >= 100) {
-                            this.winDisplayed = this.winDisplayed + 95;
-                        }
-                        if (this.win - this.winDisplayed >= 10) {
-                            this.winDisplayed = this.winDisplayed + 5;
-                        }
-                        if (this.win - this.winDisplayed >= 1) {
-                            this.winDisplayed++;
-                        }
-                        if (this.winDisplayed === this.win) {
-                            clearInterval(cashCounter);
-                            if (this.win >= this.baseBet) {
-                                this.$emit('playWin');
-                            }
-                        }
-                    }, 30);
-                }
-                else {
-                    this.winDisplayed = 0;
-                    this.$emit('endRound');
-                }
-            } else {
-                this.winDisplayed = 0;
+              this.$emit("playWin");
             }
-        }
-    },
-    methods: {
-        dollarFormat: function(x) {
-            if (x === '') {
-                return x;
-            }
-            return '$' + x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
+            clearInterval(cashCounter);
+          }
+        }, 30);
+      } else {
+        this.winDisplayed = 0;
+  
+        this.$emit("endRound");
+      }
     }
-}
+  },
+  mounted() {
+    bus.$on("updateCashDisplay", a => {
+      this.cash.win = a.win;
+      this.updateDisplay();
+
+      // this.cash.win = a.cash.win;
+    });
+  }
+};
 </script>
 
 <style scoped>
 @media all and (min-aspect-ratio: 970 / 600) {
-    /*LANDSCAPE MODE*/
-    .cashDisplays {
-        width: 30%;
-        float: right;
-        margin-right: 1%;
-        margin-top: 1%;
-    }
+  /*LANDSCAPE MODE*/
+  .cashDisplays {
+    width: 30%;
+    float: right;
+    margin-right: 1%;
+    margin-top: 1%;
+  }
 }
 
 @media all and (max-aspect-ratio: 520 / 600) {
-    /*PORTRAIT MODE*/
-    .cashDisplays {
-        width: 42%;
-        float: right;
-        margin-right: 1%;
-        margin-top: 1%;
-    }
+  /*PORTRAIT MODE*/
+  .cashDisplays {
+    width: 42%;
+    float: right;
+    margin-right: 1%;
+    margin-top: 1%;
+  }
 }
 
 @media all and (max-aspect-ratio: 970 / 600) and (min-aspect-ratio: 520 / 600) {
-    /*SQUARE (DESKTOP) MODE*/
-    .cashDisplays {
-        width: 30%;
-        float: right;
-        margin-right: 1%;
-        margin-top: 1%;
-    }
+  /*SQUARE (DESKTOP) MODE*/
+  .cashDisplays {
+    width: 30%;
+    float: right;
+    margin-right: 1%;
+    margin-top: 1%;
+  }
 }
 </style>

@@ -3,11 +3,11 @@
          <svg class="againImg noSelect" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40">
 
            <rect @click="slideRight()" class="rectChoice" fill="#3E9D00" x="1" y="1" rx="10" ry="10" width="75" height="25" />
-            <text @click="slideRight()" text-anchor="middle" class="arrows glow" font-weight="bold" font-size="25" x="40" y="22" fill="#D7522D" >
+            <text @click="slideRight()" text-anchor="middle" class="arrows glow" font-weight="bold" font-size="25" x="40" y="22" fill="#ffffff" >
                > > ></text>
 
            <rect  @click="slideLeft()" fill="#3E9D00" class="rectChoice" x="123" y="1" rx="10" ry="10" width="75" height="25" />
-            <text @click="slideLeft()" text-anchor="middle" class="arrows glow" font-weight="bold" font-size="25" x="160" y="22" fill="#D7522D" >
+            <text @click="slideLeft()" text-anchor="middle" class="arrows glow" font-weight="bold" font-size="25" x="160" y="22" fill="#ffffff" >
                < < < </text>
         </svg>
 
@@ -36,7 +36,7 @@ export default {
 }
 .arrows {
   paint-order: stroke;
-  stroke: #ffffff;
+  stroke: #0e520b;
   /*  fill: #ffffff; */
   stroke-width: 2px;
   stroke-linecap: round;
@@ -54,49 +54,10 @@ export default {
   position: absolute;
 }
 
-@-webkit-keyframes glow {
-  0% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.5;
-  }
-}
-@-moz-keyframes glow {
-  0% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.5;
-  }
-}
-@-o-keyframes glow {
-  0% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.5;
-  }
-}
 @keyframes glow {
-  0% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.5;
-  }
+  0% { transform: translate(-0.1em); }
+  50% {transform: translate(0.1em);}
+  100% { transform: translate(-0.1em);}
 }
 
 .glow {
