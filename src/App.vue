@@ -31,7 +31,7 @@
 
       <div class="cardArea"   v-for="(r,index) in finalResults"  :class="setLabelTopShift(r, index)" >
         <div v-if="stage.multiResults" style="position: absolute;" class="label">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 91 12"   @click="reviewCards(index)">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 12"   @click="reviewCards(index)">
             <rect :fill="r.fill" style="stroke:#bababa; stroke-miterlimit:10;" x="1" y="1" rx="2" width="89" height="10" :opacity="reviewHand[index] === true ? 1 : 0.4" />
             <text v-if="r.rank > 0" class="payTableText" text-anchor="left" font-weight="bold" font-size="6" x="5" y="8.5" fill="#ffffff"  :opacity="reviewHand[index] === true ? 1 : 0.4">
               {{r.label}}</text>
@@ -40,6 +40,11 @@
             <text v-if="r.rank > 0" class="labelCash payTableText" text-anchor="end" font-weight="bold" font-size="7" x="85" y="8.5" fill="#02F53A"  :opacity="reviewHand[index] === true ? 1 : 0.4">
               {{dollarFormat(r.reward)}}
             </text>
+
+           <circle v-if="r.payMultiply > 1 && r.rank > 0" cx="96" cy="6" r="6" stroke="black" stroke-width="0.5" fill="red" :opacity="reviewHand[index] === true ? 1 : 0.4"></circle>
+ <text  v-if="r.payMultiply > 1 && r.rank > 0" class="payTableText" text-anchor="middle" font-weight="bold" font-size="6" x="96" y="8.5" fill="#ffffff"  :opacity="reviewHand[index] === true ? 1 : 0.4">
+            ×{{r.payMultiply}}</text>
+
           </svg>
         </div>
       </div>
@@ -216,6 +221,8 @@ var dealer = new dealerPerson(),
     };
   });
 
+//console.log(dealer.getMultiply());
+
 export default {
   name: "app",
   components: {
@@ -353,6 +360,17 @@ export default {
   },
   methods: {
     setLabelTopShift(r, index) {
+      if (this.stage.results) {
+        return this.topShiftClass[index];
+      } else {
+        if (this.reviewHand[index]) {
+          return this.topShiftClass[0];
+        }
+        if (this.reviewHand.indexOf(true) > index) {
+          return this.topShiftClass[index + 1];
+        }
+        return this.topShiftClass[index];
+      }
       if (this.reviewHand[index]) {
         return this.topShiftClass[0];
       }
@@ -636,7 +654,9 @@ export default {
     slideRight(rounds) {
       //  this.finalResults = [];
       this.finalResults.push(finalResults.fiveCards(this.mCards.slice(3, 8)));
+      this.finalResults[0].payMultiply = dealer.getMultiply();
       this.finalResults[0].reward = this.recordReward(this.finalResults[0]);
+
       this.updateActiveHand(0);
       this.stage.multiResults = true;
 
@@ -661,6 +681,7 @@ export default {
               this.finalResults.push(
                 finalResults.fiveCards(this.mCards.slice(2 - i, 7 - i))
               );
+              this.finalResults[i + 1].payMultiply = dealer.getMultiply();
               this.finalResults[i + 1].reward = this.recordReward(
                 this.finalResults[i + 1]
               );
@@ -681,7 +702,9 @@ export default {
     slideLeft(rounds) {
       //  this.finalResults = [];
       this.finalResults.push(finalResults.fiveCards(this.mCards.slice(3, 8)));
+      this.finalResults[0].payMultiply = dealer.getMultiply();
       this.finalResults[0].reward = this.recordReward(this.finalResults[0]);
+
       this.updateActiveHand(0);
       this.stage.multiResults = true;
 
@@ -706,6 +729,7 @@ export default {
               this.finalResults.push(
                 finalResults.fiveCards(this.mCards.slice(i + 4, i + 9))
               );
+              this.finalResults[i + 1].payMultiply = dealer.getMultiply();
               this.finalResults[i + 1].reward = this.recordReward(
                 this.finalResults[i + 1]
               );
@@ -734,12 +758,18 @@ export default {
       }
     },
     recordReward(d) {
-      return this.cash.coinValue * this.cash.base_coin_cost * d.payout * 1;
+      //console.log(d.payMultiply, this.cash.coinValue * this.cash.base_coin_cost * d.payout * d.payMultiply, d.payout);
+      return this.cash.coinValue * this.cash.base_coin_cost * d.payout;
     },
     analyzeCash() {
       this.cash.win = 0;
       this.finalResults.forEach(d => {
-        this.cash.win = this.cash.win + d.reward;
+        if (d.payMultiply > 1) {
+          this.cash.win = this.cash.win + d.reward * d.payMultiply;
+        } else {
+          this.cash.win = this.cash.win + d.reward;
+        }
+      //  console.log(d);
       });
 
       this.cash.balance = this.cash.balance + this.cash.win;

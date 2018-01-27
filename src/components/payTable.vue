@@ -38,6 +38,14 @@ export default {
 </script>
 
 <style>
+
+
+@supports (-ms-ime-align:auto) {
+    .payTableText, .againText, .tapText {
+        stroke-width:0.4px !important;
+    }
+}
+
 .tblAnimation-enter-active {
     animation: tblAnimation-in .5s;
 }

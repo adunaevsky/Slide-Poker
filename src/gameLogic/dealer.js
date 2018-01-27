@@ -7,10 +7,15 @@ class dealerPerson {
     /* bonusCardsChances = {
         1: 2, 2: 2, 3: 2, 4: 2, 5: 3, 6: 3, 7: 3, 8: 4, 9: 4, 10: 5
     } */
-    multiplyPayChances = {
-        1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 2, 8: 2, 9: 2, 10: 3
-    }
+    multiplyPayChances = {};
 
+    muplitplyParams = [{ limit: 630, value: 1 },
+    { limit: 900, value: 2 },
+    { limit: 990, value: 3 },
+    { limit: 996, value: 5 },
+    { limit: 999, value: 8 },
+    { limit: 1000, value: 10 },
+    ];
 
     clearCards() {
         this.mainCards = ['', '', '', '', '', '', '', '', '', '', ''];
@@ -22,11 +27,11 @@ class dealerPerson {
         if (typeof testCase === 'object' && cardTypes === 'mainCards' && testCase.length > 0) {
 
             this.mainCards[cardNum] = testCase[cardNum - 3];
-           
+
             var cardInDeck = this.deck.indexOf(this.mainCards[cardNum]);
             this.deck.splice(cardInDeck, 1);
 
-           //  console.log(cardInDeck, this.deck.length, this.mainCards, testCase, cardNum - 3, cardNum);
+            //  console.log(cardInDeck, this.deck.length, this.mainCards, testCase, cardNum - 3, cardNum);
 
         } else {
             var cardsInDeck = this.deck.length;
@@ -37,11 +42,34 @@ class dealerPerson {
     }
 
 
-    setNumPayMultiply() {
-        var num = Math.floor(Math.random() * 10) + 1;
-        //  console.log('this.multiplyPayChances[num]', this.multiplyPayChances[num], num)
-        this.numPayMultiply = this.multiplyPayChances[num];
 
+    setMultiplyChances() {
+
+        this.muplitplyParams.forEach((k, i) => {
+            if (i === 0) {
+                k.percent = (k.limit / 1000 * 100).toFixed(1) + '%';
+            } else {
+                var chunk = this.muplitplyParams[i].limit - this.muplitplyParams[i - 1].limit;
+                k.percent = (chunk / 1000 * 100).toFixed(1) + '%';
+            }
+        });
+
+        var result = {};
+        for (var i = 1; i <= 1000; i++) {
+
+            this.muplitplyParams.forEach((k) => {
+
+                if (i <= k.limit && typeof result[i] === 'undefined') {
+                    result[i] = k.value;
+                }
+            });
+        }
+        return result;
+
+    }
+
+    getMultiply(){
+        return this.multiplyPayChances[Math.floor(Math.random() * 1000) + 1];
     }
 
     swapCard(cardNum) {
@@ -76,6 +104,7 @@ class dealerPerson {
 
     constructor() {
         this.clearCards();
+        this.multiplyPayChances = this.setMultiplyChances();
         /*        console.log('devMode:', this.devMode);*/
     }
 

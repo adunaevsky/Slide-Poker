@@ -582,7 +582,7 @@ export default {
   }
 
   .label {
-    width: 30%;
+    width: 36%;
     left: 35.5%;
   }
   .mainCards {
@@ -618,7 +618,7 @@ export default {
 @media all and (max-aspect-ratio: 520 / 600) {
   /*PORTRAIT MODE*/
   .label {
-    width: 55%;
+    width: 66%;
     left: 22.5%;
   }
   .rSlide1 {
@@ -1021,7 +1021,7 @@ export default {
   /*SQUARE (DESKTOP) MODE*/
 
   .label {
-    width: 44%;
+    width: 53%;
     left: 28.725%;
   }
 
