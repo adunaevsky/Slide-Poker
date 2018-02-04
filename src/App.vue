@@ -1,5 +1,5 @@
 <template>
-  <div class="fullScreen">
+  <div class="fullScreen" :style="bgImg">
       
     <pay-table></pay-table>
     <logo></logo>
@@ -29,7 +29,8 @@
       </div>
     </div>
 
-      <div class="cardArea"   v-for="(r,index) in finalResults"  :class="setLabelTopShift(r, index)" >
+      <div class="cardArea"   v-for="(r,index) in finalResults"  :class="topShiftClass[index]" >
+             
         <div v-if="stage.multiResults" style="position: absolute;" class="label">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 12"   @click="reviewCards(index)">
             <rect :fill="r.fill" style="stroke:#bababa; stroke-miterlimit:10;" x="1" y="1" rx="2" width="89" height="10" :opacity="reviewHand[index] === true ? 1 : 0.4" />
@@ -40,13 +41,16 @@
             <text v-if="r.rank > 0" class="labelCash payTableText" text-anchor="end" font-weight="bold" font-size="7" x="85" y="8.5" fill="#02F53A"  :opacity="reviewHand[index] === true ? 1 : 0.4">
               {{dollarFormat(r.reward)}}
             </text>
-
-           <circle v-if="r.payMultiply > 1 && r.rank > 0" cx="96" cy="6" r="6" stroke="black" stroke-width="0.5" fill="red" :opacity="reviewHand[index] === true ? 1 : 0.4"></circle>
- <text  v-if="r.payMultiply > 1 && r.rank > 0" class="payTableText" text-anchor="middle" font-weight="bold" font-size="6" x="96" y="8.5" fill="#ffffff"  :opacity="reviewHand[index] === true ? 1 : 0.4">
-            ×{{r.payMultiply}}</text>
-
+    
+                <g v-if="r.payMultiply > 1 && r.rank > 0" >
+                          <circle cx="96" cy="6" r="5.5" stroke="yellow" stroke-width="1" fill="red" :opacity="reviewHand[index] === true ? 1 : 0.4"></circle>
+                <text  class="payTableText" text-anchor="middle" font-weight="bold" font-size="6" x="96" y="8.5" fill="#ffffff"  :opacity="reviewHand[index] === true ? 1 : 0.4">
+                            ×{{r.payMultiply}}</text>
+                </g>
+           
           </svg>
         </div>
+        
       </div>
 
 <tap-labels v-if="stage.results && stage.animationDone && !stage.singleResult"></tap-labels>
@@ -85,21 +89,22 @@
 
 
 <!-- FOR TESTING (start) -->
-     <!--    <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
+        <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
             <span v-if="option.autohold">☑</span>
             <span v-if="!option.autohold">☐</span>
             Auto hold
             <span v-if="!option.autohold"> is OFF</span>
             <span v-if="option.autohold"> is ON</span>
-          </button> -->
+          </button>
           <select v-model="selectedTest" style="position:absolute; bottom:0.5%; left: 10.5rem; width: 10rem;">
             <option v-for="o in testScenarios" :value="o.cards">{{o.desc}}</option>
           </select>
-         <!--  <div v-if="holdReason !== ''" style="position:absolute; bottom:0.5%; left: 20.5rem; font-size:1rem; cursor: pointer; color: lightyellow; background:  rgba(0, 0, 0, 0.5); padding: 0.5rem; padding-bottom: 0rem; ">
+          <div v-if="holdReason !== ''" style="position:absolute; bottom:0.5%; left: 20.5rem; font-size:1rem; cursor: pointer; color: lightyellow; background:  rgba(0, 0, 0, 0.5); padding: 0.5rem; padding-bottom: 0rem; ">
             <b>Hold reason: </b>
             {{holdReason}}
 
-          </div> -->
+          </div>
+          <div style="position:absolute; bottom:0rem; right: 0rem; background:yellow; font-size:1em; cursor:pointer;" @click="changeBG()">BG {{bgImg.slice(35,36)}}</div>
 
 
 <!-- FOR TESTING (end) -->
@@ -194,10 +199,12 @@ import again from "./components/playAgain";
 import tapLabels from "./components/tapLabels";
 
 import autoHolder from "./gameLogic/autoHolder";
+import autoSlider from "./gameLogic/autoSlider";
 import tests from "./gameLogic/testCases";
 
 var finalResults = new handResult();
 var getHolds = new autoHolder();
+var getBestSlide = new autoSlider();
 
 var dealer = new dealerPerson(),
   cardPos = [
@@ -243,10 +250,13 @@ export default {
   },
   data() {
     return {
+      bgImg: "background-image: url('./static/bgg1.jpg')",
+      bgImgs: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      currentImg: 2,
       testScenarios: tests,
-      selectedTest: tests[0].cards,
+      selectedTest: tests[2].cards,
       option: {
-        autohold: false,
+        autohold: true,
         autoplay: false
       },
       infoBoxOpen: false,
@@ -359,7 +369,13 @@ export default {
     }
   },
   methods: {
-    setLabelTopShift(r, index) {
+    /*     getBGNum(s){
+console.log(s);
+var result = s.slice(35,36);
+console.log(result, s);
+return result;
+    }, */
+    /*     setLabelTopShift(r, index) {
       if (this.stage.results) {
         return this.topShiftClass[index];
       } else {
@@ -378,7 +394,7 @@ export default {
         return this.topShiftClass[index + 1];
       }
       return this.topShiftClass[index];
-    },
+    }, */
     reviewCards(n) {
       if (this.stage.results && this.stage.animationDone) {
         var currentHand = this.reviewHand.indexOf(true);
@@ -513,6 +529,11 @@ export default {
           this.playDealSound();
           if (i === 4) {
             this.flipMainCards(300, [3, 4, 5, 6, 7], false);
+            setTimeout(() => {
+              if (this.option.autohold) {
+                this.setHolds();
+              }
+            }, 1200);
           }
         }, i * 200);
       }
@@ -610,9 +631,19 @@ export default {
             cardValues[3] === cardValues[4]) ||
           (cardValues[0] === cardValues[1] &&
             cardValues[2] === cardValues[3]) ||
-          (cardValues[1] === cardValues[2] && cardValues[3] === cardValues[4])
+          (cardValues[1] === cardValues[2] &&
+            cardValues[3] === cardValues[4]) ||
+          (cardValues[1] === cardValues[2] &&
+            cardValues[3] === cardValues[2]) ||
+          (cardValues[1] === cardValues[2] &&
+            cardValues[2] === cardValues[4]) ||
+          (cardValues[0] === cardValues[2] && cardValues[3] === cardValues[2])
         ) {
           this.stage.slideChoice = true;
+         
+          if(this.option.autohold){
+            getBestSlide.analyze(cardValues);
+          }
         } else if (cardValues[0] === cardValues[1]) {
           this.slideCards("right", 3);
         } else if (cardValues[3] === cardValues[4]) {
@@ -641,6 +672,8 @@ export default {
           this.slideCards("left", 3);
         } else if (cardValues[2] === cardValues[3]) {
           this.slideCards("left", 2);
+        } else if (cardValues[2] === cardValues[1]) {
+          this.slideCards("left", 1);
         }
       }
       if (direction === "right") {
@@ -648,6 +681,8 @@ export default {
           this.slideCards("right", 3);
         } else if (cardValues[1] === cardValues[2]) {
           this.slideCards("right", 2);
+        } else if (cardValues[2] === cardValues[3]) {
+          this.slideCards("right", 1);
         }
       }
     },
@@ -769,7 +804,7 @@ export default {
         } else {
           this.cash.win = this.cash.win + d.reward;
         }
-      //  console.log(d);
+        //  console.log(d);
       });
 
       this.cash.balance = this.cash.balance + this.cash.win;
@@ -850,14 +885,22 @@ export default {
         }
       });
     },
-    /*  setHolds() {
-      var hold = getHolds.setHolds(dealer.mainCards);
+    setHolds() {
+      var cards = [];
+
+      for (var i = 0; i < dealer.mainCards.length; i++) {
+        if (i >= 3 && i <= 7) {
+          cards.push(dealer.mainCards[i]);
+        }
+      }
+
+      var hold = getHolds.setHolds(cards);
       this.holdReason = hold.reason;
-      //  console.log(hold);
+
       hold.result.forEach((h, i) => {
-        cardHolds[i].active = h;
+        cardHolds[i + 3].active = h;
       });
-    }, */
+    },
     playDealSound() {
       this.soundDeal.pause();
       this.soundDeal.currentTime = 0;
@@ -931,6 +974,22 @@ export default {
         catch: new Function()
       };
       (this.soundEndRound.play() || nopromise).catch(function() {});
+    },
+    cycleBgImg() {
+      setInterval(() => {
+        this.changeBG();
+      }, 180000);
+    },
+    changeBG() {
+      if (this.currentImg >= this.bgImgs.length - 1) {
+        this.currentImg = 0;
+      } else {
+        this.currentImg++;
+      }
+      this.bgImg =
+        "background-image: url('./static/bgg" +
+        this.bgImgs[this.currentImg] +
+        ".jpg')";
     }
   },
   mounted: function() {
@@ -949,6 +1008,8 @@ export default {
     /*     this.playIntro(); */
     this.cash.baseBet = this.cash.coinValue * this.cash.base_coin_cost;
     this.cash.MDBet = this.cash.coinValue * this.cash.MD_coin_cost;
+
+    this.cycleBgImg();
   }
 };
 </script>
@@ -974,14 +1035,12 @@ body {
 
 .fullScreen,
 #app {
-  /*   font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px; */
   width: 100%;
   height: 100%;
+
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
   background-color: #0000a0;
 }
 

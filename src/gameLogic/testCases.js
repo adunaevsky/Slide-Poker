@@ -1,5 +1,8 @@
 var tests = [
     { cards: [], desc: "random cards" },
+    { cards: ["C12","C4","D4","C14","H4"], desc: "3OK choice A" },
+    { cards: ["C4","C12","H4","D4","H14"], desc: "3OK choice B" },
+    { cards: ["C12","C4","D4","H4","C14"], desc: "slide choice fix" },
     { cards: ["C12","C4","D10","C10","C14"], desc: "3 to royal flush fix 1" },
     { cards: ["C9","C13","C10","D10","C14"], desc: "3 to royal flush fix 2" },
     { cards: ["D3","C6","H2","C9","C5"], desc: "3 to flush fix 1" },

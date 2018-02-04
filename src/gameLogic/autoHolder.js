@@ -16,55 +16,83 @@ class autoHolder {
             });
         });
 
+        // console.log(holdResult);
+
         if (checkFor.royal(cards) || checkFor.straightFlush(cards)) {
+            // console.log('rule 1');
             r.reason = 'royal flush or straight flush';
             r.result = holdResult;
-        } else if (checkFor.fourOfKind(cards)) {
-            r.reason = 'Four of a Kind';
-            r.result = this.setHoldOnCardsOfDifValue(cards, 1);;
+        } else if (checkFor.fourOfKind(cards) ) {
+            // console.log('rule 2');
+            if (checkFor.fourOK_24_w_Kicker(cards) || checkFor.fourOK_A_w_Kicker(cards)) {
+                r.reason = 'Four of a Kind with kicker';
+                r.result = holdResult;
+            } else 
+            if(!checkFor.fourOK_A(cards) || !checkFor.fourOK_2_to_4(cards)){
+                r.reason = 'Four of a Kind w/ no kicker';
+                r.result = this.setHoldOnCardsOfDifValue(cards, 1);
+            } else{
+                r.reason = 'simple Four of a Kind';
+                r.result = this.setHoldOnCardsOfDifValue(cards, 1);
+            }
         } else if (this.almostRoyalFlush(cards)) {
+            // console.log('rule 3');
             r.reason = '4 to a Royal Flush';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (checkFor.fullHouse(cards) || checkFor.flush(cards) || checkFor.straight(cards)) {
+            // console.log('rule 4', checkFor.fullHouse(cards), checkFor.flush(cards),  checkFor.straight(cards), holdResult);
             r.reason = 'full-house, flush or straight';
-            r.result = holdResult;
+            r.result = [true, true, true, true, true];  //why does the holdReulst give [false, true, true, true, true] ???
         } else if (checkFor.threeOfKind(cards)) {
+            // console.log('rule 5');
             r.reason = 'three of a Kind';
             r.result = this.setHoldOnCardsOfDifValue(cards, 2);;
         } else if (this.fourToStrightFlush(cards)) {
+            // console.log('rule 6');
             r.reason = '4 to a straight flush';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (checkFor.twoPair(cards)) {
+            // console.log('rule 7');
             r.reason = 'two pair';
             r.result = this.setTwoPairHold(cards);
         } else if (checkFor.pair(cards)) {
+            // console.log('rule 8');
             r.reason = 'high pair';
             r.result = this.setHighPairHold(cards);
         } else if (this.threeToRoyalFlush(cards)) {
+            // console.log('rule 9');
             r.reason = '3 to a royal flush';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (this.fourToFlush(cards)) {
+            // console.log('rule 10');
             r.reason = '4 to a flush';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (this.lowPair(cards)) {
+            // console.log('rule 11');
             r.reason = 'low pair';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (this.fourToStraight(cards)) {
+            // console.log('rule 12');
             r.reason = '4 to an outside straight (open ended straight)';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (this.twoSuitedHigh(cards)) {
+            // console.log('rule 13');
             r.reason = '2 suited high cards';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (this.threeToStaight(cards)) {
+            // console.log('rule 14');
             r.reason = '3 to a straight flush';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (this.twoUnsuitedHighCards(cards)) {
+            // console.log('rule 15');
             r.reason = '2 unsuited high cards';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (this.twoSuitedTenToAce(cards)) {
+            // console.log('rule 16');
             r.reason = 'Suited 10/J, 10/Q, or 10/K';
             r.result = holdResult; //holdResult was set in the if test!
         } else if (this.oneHighCard(cards)) {
+            // console.log('rule 17');
             r.reason = 'One high card';
             r.result = holdResult; //holdResult was set in the if test!
         } else {
@@ -85,7 +113,7 @@ class autoHolder {
             }
         });
 
-        if(noGoodCards.length === 4){
+        if (noGoodCards.length === 4) {
             result = true;
             noGoodCards.forEach((j) => {
                 holdResult[j.id] = false;
@@ -172,16 +200,22 @@ class autoHolder {
             s = sortedCards.map((v) => { return v.suit });
         // h for hold
         var result = false;
+        // console.log("c", c);
+        // console.log("s", s);
+        // console.log("h", h);
+        // console.log(s[0] === s[1] && s[1] === s[2]);
 
-        //  console.log('hold IDs:',h)
-        //  console.log('card values:', c)
+        //  // console.log('hold IDs:',h)
+        //  // console.log('card values:', c)
 
         //xxx cases --> 3 variations.
         if (!result && (s[0] === s[1] && s[1] === s[2]) && (
             (c[0] + 1 === c[1] && c[1] + 1 === c[2]) || //v1: xxx_ _
             (c[0] + 2 === c[1] && c[1] + 2 === c[2]) || //x_x_x with a sort order of xxx_ _
             (c[0] + 2 === c[1] && c[1] + 1 === c[2]) || //x_xx with a sort order of xxx_ _
-            (c[0] + 1 === c[1] && c[1] + 2 === c[2])    //xx_x with a sort order of xxx_ _
+            (c[0] + 1 === c[1] && c[1] + 2 === c[2]) ||   //xx_x with a sort order of xxx_ _
+            (c[0] + 1 === c[1] && c[1] + 3 === c[2]) ||    //xx _ _ x  with a sort order of _xxx_
+            (c[0] + 3 === c[1] && c[1] + 1 === c[2])       //x_ _ x x  with a sort order of _xxx_
         )
         ) {
             result = true;
@@ -193,7 +227,9 @@ class autoHolder {
             (c[1] + 1 === c[2] && c[2] + 1 === c[3]) ||  //v2: _xxx_
             (c[1] + 2 === c[2] && c[2] + 2 === c[3]) ||  //x_x_x with a sort order of _xxx_
             (c[1] + 2 === c[2] && c[2] + 1 === c[3]) ||  //x_xx with a sort order of _xxx_
-            (c[1] + 1 === c[2] && c[2] + 2 === c[3])     //xx_x with a sort order of _xxx_
+            (c[1] + 1 === c[2] && c[2] + 2 === c[3]) ||    //xx_x with a sort order of _xxx_
+            (c[1] + 1 === c[2] && c[1] + 4 === c[3]) ||    //xx _ _ x  with a sort order of _xxx_
+            (c[1] + 3 === c[2] && c[1] + 4 === c[3])       //x_ _ x x  with a sort order of _xxx_
         )) {
             result = true;
             holdResult[h[0]] = false;
@@ -204,12 +240,15 @@ class autoHolder {
             (c[2] + 1 === c[3] && c[3] + 1 === c[4]) ||   //v3: __xxx
             (c[2] + 2 === c[3] && c[3] + 2 === c[4]) ||   //x_x_x with a sort order of __xxx
             (c[2] + 2 === c[3] && c[3] + 1 === c[4]) ||   //x_xx  with a sort order of __xxx
-            (c[2] + 1 === c[3] && c[3] + 2 === c[4])      //xx_x  with a sort order of __xxx
+            (c[2] + 1 === c[3] && c[3] + 2 === c[4]) ||     //xx_x  with a sort order of __xxx
+            (c[2] + 1 === c[3] && c[3] + 3 === c[4]) ||    //xx _ _ x  with a sort order of _xxx_
+            (c[2] + 3 === c[3] && c[3] + 1 === c[4])       //x_ _ x x  with a sort order of _xxx_
         )) {
             result = true;
             holdResult[h[0]] = false;
             holdResult[h[1]] = false;
         }
+
 
         if (c[4] === 14 && !result && (s[0] === s[1] && s[1] === s[4])) {
             // ace cases
@@ -338,13 +377,17 @@ class autoHolder {
     }
 
     threeToRoyalFlush(cards) {
+       
         var suits = this.getCardSuitCounts(cards);
+        // console.log(suits);
         var reqValues = [10, 11, 12, 13, 14], validCards = 0, result = false, noGoodCards = [];
         for (var key in suits) {
-            if (suits[key].length === 3) {
+            if (suits[key].length >= 3) {
                 suits[key].forEach((j) => {
                     if (reqValues.indexOf(j.value) > -1) {
                         validCards++;
+                    } else{
+                        noGoodCards.push(j);
                     }
                 });
             } else {
@@ -355,6 +398,7 @@ class autoHolder {
         }
         if (validCards === 3) {
             noGoodCards.forEach((l) => {
+                // console.log(l);
                 holdResult[l.id] = false;
             });
             result = true;
@@ -466,29 +510,29 @@ class autoHolder {
 
     almostRoyalFlush(cards) {
 
-        //  console.log('got here sdfsdfsdf');
+        //  // console.log('got here sdfsdfsdf');
 
         var result = true;
         //var sameSuits = this.findSameSuits(cards);
         var sameSuits = this.findSameSuits2(cards);
 
-        // console.log(sameSuits);
+        // // console.log(sameSuits);
 
         if (sameSuits.values.length === 5) {
             //checkIfAlmostCombo();
             holdResult = checkIfAlmostCombo();
         } else if (sameSuits.values.length === 4) {
-            // console.log('same suit??');
+            // // console.log('same suit??');
 
 
             var tempHolds = checkIfAlmostCombo();
-            //  console.log('what now/?', result);
+            //  // console.log('what now/?', result);
             if (result) {
                 holdResult = tempHolds
-                // console.log('what givves this?');
+                // // console.log('what givves this?');
                 //the 4 suits are good, now find the missing one!
                 var badCard = this.filterCardsToDrop(cards, sameSuits.cards);
-                console.log(badCard);
+                // console.log(badCard);
                 holdResult[badCard[0].id] = false;
             }
         }
@@ -497,7 +541,7 @@ class autoHolder {
             result = false;
         }
 
-        // console.log(result);
+        // // console.log('almostRoyalFlush', result);
         return result;
 
         function checkIfAlmostCombo() {
@@ -507,7 +551,7 @@ class autoHolder {
 
             _.forEach(sameSuits.values, (v, i) => {
                 var valueCheck = reqValues.indexOf(v);
-                // console.log(valueCheck);
+                // // console.log(valueCheck);
                 if (valueCheck === -1) {
                     if (spare == 0) {
                         spare++
@@ -558,8 +602,18 @@ class autoHolder {
         }
 
         var valuesArray = suitCounts[currentSuit].map((c) => {
+          //  // console.log(c.value);
             return c.value;
         });
+
+        for(var i = 0;  i < valuesArray.length; i++){
+            if(valuesArray[i] < 10){
+                valuesArray.splice(i,1);
+                suitCounts[currentSuit].splice(i,1);
+            }
+        }
+
+      //  // console.log(valuesArray, suitCounts[currentSuit]);
 
         var result = {
             values: valuesArray,
