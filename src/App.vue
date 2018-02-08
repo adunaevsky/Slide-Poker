@@ -101,10 +101,13 @@
           </select>
           <div v-if="holdReason !== ''" style="position:absolute; bottom:0.5%; left: 20.5rem; font-size:1rem; cursor: pointer; color: lightyellow; background:  rgba(0, 0, 0, 0.5); padding: 0.5rem; padding-bottom: 0rem; ">
             <b>Hold reason: </b>
-            {{holdReason}}
-
+            {{holdReason}} 
           </div>
-          <div style="position:absolute; bottom:0rem; right: 0rem; background:yellow; font-size:1em; cursor:pointer;" @click="changeBG()">BG {{bgImg.slice(35,36)}}</div>
+
+          <div style="color: white; position:absolute; bottom:5%; left:10%; width: 50%; font-size:1.5rem; cursor: pointer;" v-if="option.bestSlide !== ''">
+<b>Best slide</b> <br> <span v-if="option.bestSlide === 'left'"><<<</span>  <span v-if="option.bestSlide === 'right'">>>></span>({{option.bestSlide}})</div>
+         
+          <div class="changeBG" @click="changeBG()"><!-- BG {{bgImg.slice(36,37)}} --></div>
 
 
 <!-- FOR TESTING (end) -->
@@ -250,14 +253,15 @@ export default {
   },
   data() {
     return {
-      bgImg: "background-image: url('./static/bgg1.jpg')",
-      bgImgs: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      bgImg: "background-image: url('./static/BBGG1.jpg')",
+      bgImgs: ["1", "2", "3"],
       currentImg: 2,
       testScenarios: tests,
-      selectedTest: tests[2].cards,
+      selectedTest: tests[0].cards,
       option: {
         autohold: true,
-        autoplay: false
+        autoplay: false,
+        bestSlide: ""
       },
       infoBoxOpen: false,
       stage: {
@@ -640,9 +644,9 @@ return result;
           (cardValues[0] === cardValues[2] && cardValues[3] === cardValues[2])
         ) {
           this.stage.slideChoice = true;
-         
-          if(this.option.autohold){
-            getBestSlide.analyze(cardValues);
+
+          if (this.option.autohold) {
+            this.option.bestSlide = getBestSlide.analyze(cardValues);
           }
         } else if (cardValues[0] === cardValues[1]) {
           this.slideCards("right", 3);
@@ -827,7 +831,7 @@ return result;
       for (var slideType in this.reviewSlides) {
         this.reviewSlides[slideType] = false;
       }
-
+      this.option.bestSlide = "";
       dealer.newDeck();
       this.skipFlyIn = false;
       this.finalResults = [];
@@ -987,7 +991,7 @@ return result;
         this.currentImg++;
       }
       this.bgImg =
-        "background-image: url('./static/bgg" +
+        "background-image: url('./static/BBGG" +
         this.bgImgs[this.currentImg] +
         ".jpg')";
     }
@@ -1058,6 +1062,20 @@ body {
   padding-top: 42%;
   margin: 0 auto;
   text-align: center;
+  cursor: pointer;
+}
+
+.changeBG {
+  position: absolute;
+  bottom: 0.2rem;
+  right: 0.2rem;
+  width: 2em;
+  height: 2em;
+  background-image: url('../static/refresh.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+ /*  background: yellow; */
+  font-size: 1em;
   cursor: pointer;
 }
 </style>
