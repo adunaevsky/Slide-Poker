@@ -19,10 +19,9 @@ class dealerPerson {
 
     clearCards() {
         this.mainCards = ['', '', '', '', '', '', '', '', '', '', ''];
-
-
     }
     getCard(cardNum, testCase, cardTypes) {
+        console.log(cardNum, testCase, cardTypes);
 
         if (typeof testCase === 'object' && cardTypes === 'mainCards' && testCase.length > 0) {
 

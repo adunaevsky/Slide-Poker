@@ -290,7 +290,7 @@ export default {
         betWin: 100,
         win: 0,
         coinValue: 1,
-        MD_coin_cost: 5,
+        slide_cost: 5,
         base_coin_cost: 5
       },
 
@@ -523,7 +523,7 @@ return result;
       this.stage.newRound = false;
       this.cash.totalBet =
         this.cash.coinValue *
-        (this.cash.base_coin_cost + this.cash.MD_coin_cost);
+        (this.cash.base_coin_cost + this.cash.slide_cost);
 
       this.cash.balance = this.cash.balance - this.cash.totalBet;
 
@@ -1011,7 +1011,7 @@ return result;
     this.soundEndRound = document.getElementById("soundLabel");
     /*     this.playIntro(); */
     this.cash.baseBet = this.cash.coinValue * this.cash.base_coin_cost;
-    this.cash.MDBet = this.cash.coinValue * this.cash.MD_coin_cost;
+    this.cash.MDBet = this.cash.coinValue * this.cash.slide_cost;
 
     this.cycleBgImg();
   }
@@ -1074,7 +1074,6 @@ body {
   background-image: url('../static/refresh.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
- /*  background: yellow; */
   font-size: 1em;
   cursor: pointer;
 }
