@@ -1,5 +1,11 @@
 import tableValues from './payTable'
 
+import dealerP from './dealer';
+
+
+var dealer = new dealerP();
+dealer.setMultiplyChances();
+
 class handResult {
 
     fiveCards(pCards) {
@@ -87,6 +93,8 @@ class handResult {
             r.fill = '#424242';
             r.rank = 0;
         }
+
+        r.payMultiply = dealer.getMultiply();
 
         return r;
     }

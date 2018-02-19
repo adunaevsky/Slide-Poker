@@ -86,10 +86,10 @@
 
     </div>
 
-
+   <div class="changeBG" @click="changeBG()"></div>
 
 <!-- FOR TESTING (start) -->
-        <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
+      <!--   <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
             <span v-if="option.autohold">☑</span>
             <span v-if="!option.autohold">☐</span>
             Auto hold
@@ -105,31 +105,14 @@
           </div>
 
           <div style="color: white; position:absolute; bottom:5%; left:10%; width: 50%; font-size:1.5rem; cursor: pointer;" v-if="option.bestSlide !== ''">
-<b>Best slide</b> <br> <span v-if="option.bestSlide === 'left'"><<<</span>  <span v-if="option.bestSlide === 'right'">>>></span>({{option.bestSlide}})</div>
+<b>Best slide</b> <br> <span v-if="option.bestSlide === 'left'"><<<</span>  <span v-if="option.bestSlide === 'right'">>>></span>({{option.bestSlide}})</div> -->
          
-          <div class="changeBG" @click="changeBG()"><!-- BG {{bgImg.slice(36,37)}} --></div>
+       
 
 
 <!-- FOR TESTING (end) -->
 
 
-
-<!--  <button v-if="stage.showSlideBtns" @click="slideCards('left')" style="position:absolute; bottom:0%; width: 10em; font-size:1em; cursor: pointer;">slide LEFT</button>
- <button v-if="stage.showSlideBtns" @click="slideCards('right')" style="position:absolute; bottom:0%; width: 10em; left:10em; font-size:1em; cursor: pointer;">slide RIGHT</button>
- <button v-if="stage.showSlideBtns" @click="noSlide()" style="position:absolute; bottom:0%; width: 10em; left:20em; font-size:1em; cursor: pointer;">no slide</button>
- -->
-    <!--     <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
-            <span v-if="option.autohold">☑</span>
-            <span v-if="!option.autohold">☐</span>
-            Auto hold
-            <span v-if="!option.autohold"> is OFF</span>
-            <span v-if="option.autohold"> is ON</span>
-          </button>
-          <div v-if="holdReason !== ''" style="position:absolute; bottom:0.5%; left: 10.5rem; font-size:1rem; cursor: pointer; color: lightyellow; background:  rgba(0, 0, 0, 0.5); padding: 0.5rem; padding-bottom: 0rem; ">
-            <b>Hold reason: </b>
-            {{holdReason}}
-
-          </div> -->
 <transition name="fade">
           <water-mark v-if="stage.removeUnheldCards === false"></water-mark>
 </transition>
@@ -259,7 +242,7 @@ export default {
       testScenarios: tests,
       selectedTest: tests[0].cards,
       option: {
-        autohold: true,
+        autohold: false,
         autoplay: false,
         bestSlide: ""
       },
@@ -290,7 +273,7 @@ export default {
         betWin: 100,
         win: 0,
         coinValue: 1,
-        slide_cost: 5,
+        slideCost: 10,
         base_coin_cost: 5
       },
 
@@ -523,7 +506,7 @@ return result;
       this.stage.newRound = false;
       this.cash.totalBet =
         this.cash.coinValue *
-        (this.cash.base_coin_cost + this.cash.slide_cost);
+        (this.cash.base_coin_cost + this.cash.slideCost);
 
       this.cash.balance = this.cash.balance - this.cash.totalBet;
 
@@ -693,7 +676,7 @@ return result;
     slideRight(rounds) {
       //  this.finalResults = [];
       this.finalResults.push(finalResults.fiveCards(this.mCards.slice(3, 8)));
-      this.finalResults[0].payMultiply = dealer.getMultiply();
+      this.finalResults[0].payMultiply = 1;
       this.finalResults[0].reward = this.recordReward(this.finalResults[0]);
 
       this.updateActiveHand(0);
@@ -720,7 +703,7 @@ return result;
               this.finalResults.push(
                 finalResults.fiveCards(this.mCards.slice(2 - i, 7 - i))
               );
-              this.finalResults[i + 1].payMultiply = dealer.getMultiply();
+            //  this.finalResults[i + 1].payMultiply = dealer.getMultiply();
               this.finalResults[i + 1].reward = this.recordReward(
                 this.finalResults[i + 1]
               );
@@ -741,7 +724,7 @@ return result;
     slideLeft(rounds) {
       //  this.finalResults = [];
       this.finalResults.push(finalResults.fiveCards(this.mCards.slice(3, 8)));
-      this.finalResults[0].payMultiply = dealer.getMultiply();
+      this.finalResults[0].payMultiply = 1;
       this.finalResults[0].reward = this.recordReward(this.finalResults[0]);
 
       this.updateActiveHand(0);
@@ -768,7 +751,7 @@ return result;
               this.finalResults.push(
                 finalResults.fiveCards(this.mCards.slice(i + 4, i + 9))
               );
-              this.finalResults[i + 1].payMultiply = dealer.getMultiply();
+            //  this.finalResults[i + 1].payMultiply = dealer.getMultiply();
               this.finalResults[i + 1].reward = this.recordReward(
                 this.finalResults[i + 1]
               );
@@ -803,11 +786,7 @@ return result;
     analyzeCash() {
       this.cash.win = 0;
       this.finalResults.forEach(d => {
-        if (d.payMultiply > 1) {
-          this.cash.win = this.cash.win + d.reward * d.payMultiply;
-        } else {
-          this.cash.win = this.cash.win + d.reward;
-        }
+       this.cash.win = this.cash.win + (d.reward * d.payMultiply);
         //  console.log(d);
       });
 
@@ -1011,7 +990,7 @@ return result;
     this.soundEndRound = document.getElementById("soundLabel");
     /*     this.playIntro(); */
     this.cash.baseBet = this.cash.coinValue * this.cash.base_coin_cost;
-    this.cash.MDBet = this.cash.coinValue * this.cash.slide_cost;
+    this.cash.MDBet = this.cash.coinValue * this.cash.slideCost;
 
     this.cycleBgImg();
   }
@@ -1068,7 +1047,6 @@ body {
 .changeBG {
   position: absolute;
   bottom: 0.2rem;
-  right: 0.2rem;
   width: 2em;
   height: 2em;
   background-image: url('../static/refresh.svg');

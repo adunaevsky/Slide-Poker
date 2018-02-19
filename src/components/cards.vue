@@ -210,6 +210,10 @@ export default {
 @media all and (min-aspect-ratio: 970 / 600) {
   /*LANDSCAPE MODE*/
 
+.changeBG {
+  right: 0.2rem;
+  }
+
   .lSlide1 {
     animation: moveLeft1 0.8s forwards;
   }
@@ -617,6 +621,11 @@ export default {
 
 @media all and (max-aspect-ratio: 520 / 600) {
   /*PORTRAIT MODE*/
+
+.changeBG {
+  right: 0.2rem;
+  }
+
   .label {
     width: 66%;
     left: 22.5%;
@@ -1019,6 +1028,11 @@ export default {
 
 @media all and (max-aspect-ratio: 970 / 600) and (min-aspect-ratio: 520 / 600) {
   /*SQUARE (DESKTOP) MODE*/
+
+.changeBG {
+
+  left: 0.2rem;
+  }
 
   .label {
     width: 53%;

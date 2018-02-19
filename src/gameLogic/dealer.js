@@ -1,5 +1,6 @@
 class dealerPerson {
-    mainCards;
+    mainCards = ['', '', '', '', '', '', '', '', '', '', ''];
+
     deck;
     numPayMultiply;
 
@@ -9,19 +10,19 @@ class dealerPerson {
     } */
     multiplyPayChances = {};
 
-    muplitplyParams = [{ limit: 630, value: 1 },
-    { limit: 900, value: 2 },
-    { limit: 990, value: 3 },
-    { limit: 996, value: 5 },
-    { limit: 999, value: 8 },
-    { limit: 1000, value: 10 },
+    muplitplyParams = [{ limit: 500, value: 1 },
+        { limit: 850, value: 2 },
+        { limit: 990, value: 3 },
+        { limit: 996, value: 5 },
+        { limit: 999, value: 8 },
+        { limit: 1000, value: 10 }
     ];
 
-    clearCards() {
+/*     clearCards() {
         this.mainCards = ['', '', '', '', '', '', '', '', '', '', ''];
-    }
+    } */
     getCard(cardNum, testCase, cardTypes) {
-        console.log(cardNum, testCase, cardTypes);
+    //  console.log( this.mainCards);
 
         if (typeof testCase === 'object' && cardTypes === 'mainCards' && testCase.length > 0) {
 
@@ -44,6 +45,7 @@ class dealerPerson {
 
     setMultiplyChances() {
 
+      
         this.muplitplyParams.forEach((k, i) => {
             if (i === 0) {
                 k.percent = (k.limit / 1000 * 100).toFixed(1) + '%';
@@ -63,7 +65,8 @@ class dealerPerson {
                 }
             });
         }
-        return result;
+
+        this.multiplyPayChances = result;
 
     }
 
@@ -102,9 +105,7 @@ class dealerPerson {
     }
 
     constructor() {
-        this.clearCards();
-        this.multiplyPayChances = this.setMultiplyChances();
-        /*        console.log('devMode:', this.devMode);*/
+       // this.clearCards();
     }
 
 }

@@ -16,7 +16,7 @@
                 HUGE WIN</text>
 
                 <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="30" fill="#FFFFFF" :opacity="opacity">
-                96.38%</text>
+                98.73%</text>
 
                 <!-- <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="30" fill="#FFFFFF" :opacity="opacity">
                 +5</text> -->
