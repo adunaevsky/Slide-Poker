@@ -1,14 +1,14 @@
 <template>
   <div class="fullScreen" :style="bgImg">
       
-    <pay-table></pay-table>
+    <pay-table v-bind:coinValue="cash.coinValue"></pay-table>
     <logo></logo>
     <menu-btns v-on:openInfo="openInfoBox"></menu-btns>
     <info v-on:closeInfo="infoBoxOpen = false" :open="infoBoxOpen" ></info>
 
    
 
-    <cash-display  v-bind:cash="cash" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
+    <cash-display v-bind:glow="stage.results || stage.newRound" v-on:updateBet="changeBet()" v-bind:cash="cash" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
     <!-- <cash-display v-bind:MDBet="cash.MDBet" v-bind:baseBet="cash.baseBet" v-bind:bal="cash.balance" v-bind:win="cash.win" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
  -->
     <div id="mainCards" class="cardArea" :class="slideSpecs">
@@ -273,8 +273,10 @@ export default {
         betWin: 100,
         win: 0,
         coinValue: 1,
-        slideCost: 10,
-        base_coin_cost: 5
+        coinOptions: [1, 3, 5, 10, 25, 50],
+        activeCoinOption: 0,
+        slideCost: 2,
+        base_coin_cost: 1
       },
 
       holdReason: "",
@@ -446,6 +448,14 @@ return result;
         }
       }
     },
+    changeBet() {
+      if (this.cash.activeCoinOption >= this.cash.coinOptions.length - 1) {
+        this.cash.activeCoinOption = 0;
+      } else {
+        this.cash.activeCoinOption++;
+      }
+      this.cash.coinValue = this.cash.coinOptions[this.cash.activeCoinOption];
+    },
     removeRevCards(handNum) {
       var firstCard = this.slideOptions[this.originalSlide][handNum],
         lastCard = firstCard + 4;
@@ -505,8 +515,7 @@ return result;
       dealer.newDeck();
       this.stage.newRound = false;
       this.cash.totalBet =
-        this.cash.coinValue *
-        (this.cash.base_coin_cost + this.cash.slideCost);
+        this.cash.coinValue * (this.cash.base_coin_cost + this.cash.slideCost);
 
       this.cash.balance = this.cash.balance - this.cash.totalBet;
 
@@ -703,7 +712,7 @@ return result;
               this.finalResults.push(
                 finalResults.fiveCards(this.mCards.slice(2 - i, 7 - i))
               );
-            //  this.finalResults[i + 1].payMultiply = dealer.getMultiply();
+              //  this.finalResults[i + 1].payMultiply = dealer.getMultiply();
               this.finalResults[i + 1].reward = this.recordReward(
                 this.finalResults[i + 1]
               );
@@ -751,7 +760,7 @@ return result;
               this.finalResults.push(
                 finalResults.fiveCards(this.mCards.slice(i + 4, i + 9))
               );
-            //  this.finalResults[i + 1].payMultiply = dealer.getMultiply();
+              //  this.finalResults[i + 1].payMultiply = dealer.getMultiply();
               this.finalResults[i + 1].reward = this.recordReward(
                 this.finalResults[i + 1]
               );
@@ -786,7 +795,7 @@ return result;
     analyzeCash() {
       this.cash.win = 0;
       this.finalResults.forEach(d => {
-       this.cash.win = this.cash.win + (d.reward * d.payMultiply);
+        this.cash.win = this.cash.win + d.reward * d.payMultiply;
         //  console.log(d);
       });
 
@@ -1049,7 +1058,7 @@ body {
   bottom: 0.2rem;
   width: 2em;
   height: 2em;
-  background-image: url('../static/refresh.svg');
+  background-image: url("../static/refresh.svg");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   font-size: 1em;

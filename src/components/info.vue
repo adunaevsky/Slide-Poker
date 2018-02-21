@@ -59,7 +59,7 @@
                             </tr>
                         </table>
 
-                        <p class="pText"> While playing slide poker you have a 35.5 % chance a slide bonus!  Most of the slides occur automatically (29.7 % chance):
+                        <p class="pText"> While playing slide poker you have a 35.5 % chance at a slide bonus!  Most of the slides occur automatically (29.7 % chance):
                      
                           
                         </p>

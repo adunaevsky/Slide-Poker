@@ -7,7 +7,7 @@ var opts = {
     margins: { top: 0, right: 0, bottom: 0, left: 0 }
 };
 
-function tbl(value) {
+function tbl(value, coinValue) {
 
     var chartW = Math.max(opts.width - opts.margins.left - opts.margins.right, 0.1);
     var chartH = Math.max(opts.height - opts.margins.top - opts.margins.bottom, 0.1);
@@ -79,12 +79,11 @@ function tbl(value) {
             .attr('y', (y, i) => {
                 return ((33 * (i + 1) - 6) * sf)
             })
-            .attr('x', c.xShift + 180)
+            .attr('x', c.xShift + 185)
             .attr('class', 'payTableText')
-            .attr('font-size', 21)
+            .attr('font-size', 18)
             .attr('text-anchor', 'end')
-            .text(d => d.reward);
-
+            .text(d => (d.reward * coinValue));
     });
 }
 

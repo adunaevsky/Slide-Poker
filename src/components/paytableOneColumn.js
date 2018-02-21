@@ -7,7 +7,9 @@ var opts = {
     margins: { top: 0, right: 0, bottom: 0, left: 0 }
 };
 
-function table(value) {
+function table(value,coinValue) {
+
+   
 
     var chartW = Math.max(opts.width - opts.margins.left - opts.margins.right, 0.1);
     var chartH = Math.max(opts.height - opts.margins.top - opts.margins.bottom, 0.1);
@@ -25,7 +27,7 @@ function table(value) {
 
     row.enter().append('rect')
         .attr('class', 'cell row')
-        .attr('width', 100 * sf)
+        .attr('width', 110 * sf)
         .attr('height', 15 * sf)
         .attr('x', 4 * sf)
         .attr('rx', 4 * sf)
@@ -53,11 +55,11 @@ function table(value) {
         .attr('y', (y, i) => {
             return ((17 * (i + 1) - 5) * sf)
         })
-        .attr('x', 99 * sf)
+        .attr('x', 110 * sf)
         .attr('class', 'payTableText')
         .attr('font-size', 11 * sf)
         .attr('text-anchor', 'end')
-        .text(d => d.reward);
+        .text(d => d.reward * coinValue);
 
 }
 

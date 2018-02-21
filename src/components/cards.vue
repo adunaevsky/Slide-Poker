@@ -1726,6 +1726,20 @@ export default {
 }
 
 .cBack1 {
-  background-image: url("../assets/cards/cardBack2.svg");
+  /* background-image: url("../assets/cards/RG-CardBack-700.png"); */
+  background-image: url("../assets/cards/RG-CardBack-800.png");
+
+ /*  background-image: url("../assets/cards/cardBack2.svg"); */
+  /*   background-image: url("../assets/cards/cardBack_YourLogo.png"); */
+  /*   background-image: url("../assets/cards/cardBack_Wizard.png"); */
+/*     background-image: url("../assets/cards/cardBackPS.png"); */
+ /*    background-image: url("../assets/cards/cardBack-Aristocrat.png"); */
+  /*   background-image: url("../assets/cards/cardBack-Caesars.png"); */
+ /*    background-image: url("../assets/cards/cardBack_JVL.png"); */
+    /* background-image: url("../assets/cards/cardBack_Aruze.png"); */
+/*   background-image: url("../assets/cards/cardBack_ActionGaming.png"); */
+  background-size: 87% 99% !important;
+  background-position: center;
+
 }
 </style>

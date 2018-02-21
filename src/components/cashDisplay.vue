@@ -5,7 +5,7 @@
 
             <rect style="fill:#231f20; stroke:#5b5b5b; stroke-miterlimit:10;" x="46" y="0.5" rx="2" width="53.5" height="10" />
 
-            <rect style="fill:#231f20; stroke:#5b5b5b; stroke-miterlimit:10;" x="46" y="12.5" rx="2" width="53.5" height="10" />
+            <rect style="fill:#231f20; stroke:#5b5b5b; stroke-miterlimit:10;"  @click="updateBet()" :class="{glow:glow, noGlow:!glow}" x="46" y="12.5" rx="2" width="53.5" height="10" />
 
             <rect style="fill:#231f20; stroke:#5b5b5b; stroke-miterlimit:10;" x="46" y="24.5" rx="2" width="53.5" height="10" />
 
@@ -19,8 +19,8 @@
 
             <text text-anchor="end" font-weight="bold" font-size="9" x="43" y="20.5" fill="#FFFFFF" opacity="0.8">
                 BET</text>
-            <text text-anchor="middle" font-weight="bold" font-size="9" x="73" y="20.5" fill="#FFFFFF" opacity="1">
-                {{dollarFormat(cash.baseBet)}} + {{dollarFormat(cash.MDBet)}}</text>
+            <text text-anchor="middle" font-weight="bold" font-size="9" x="73" y="20.5" fill="#FFFFFF" opacity="1" :class="{pointer:glow}" @click="updateBet()">
+                {{dollarFormat(cash.baseBet * cash.coinValue)}} + {{dollarFormat(cash.MDBet * cash.coinValue)}}</text>
 
             <text text-anchor="end" font-weight="bold" font-size="9" x="43" y="32.5" fill="#FFFFFF" opacity="0.8">
                 WIN</text>
@@ -47,47 +47,19 @@
 import bus from "./../bus";
 export default {
   name: "cashDisplay",
-  props: ["cash", "showValue"],
+  props: ["cash", "showValue", "glow"],
   /*    props: ['baseBet', 'MDBet', 'bal', 'win', 'showValue'], */
   data() {
     return {
       winDisplayed: 0
     };
   },
-  watch: {
-    /*  showValue: function(value) {
-      if (value) {
-        if (this.win > 0) {
-          var cashCounter = setInterval(() => {
-            if (this.cash.win - this.winDisplayed >= 1000) {
-              this.winDisplayed = this.winDisplayed + 995;
-            }
-            if (this.cash.win - this.winDisplayed >= 100) {
-              this.winDisplayed = this.winDisplayed + 95;
-            }
-            if (this.cash.win - this.winDisplayed >= 10) {
-              this.winDisplayed = this.winDisplayed + 5;
-            }
-            if (this.cash.win - this.winDisplayed >= 1) {
-              this.winDisplayed++;
-            }
-            if (this.winDisplayed === this.win) {
-              clearInterval(cashCounter);
-              if (this.win >= this.baseBet) {
-                this.$emit("playWin");
-              }
-            }
-          }, 30);
-        } else {
-          this.winDisplayed = 0;
-          this.$emit("endRound");
-        }
-      } else {
-        this.winDisplayed = 0;
-      }
-    } */
-  },
   methods: {
+    updateBet() {
+      if (this.glow) {
+       this.$emit("updateBet");
+      }
+    },
     dollarFormat: function(x) {
       if (x === "") {
         return x;
@@ -95,9 +67,9 @@ export default {
       return "$" + x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     updateDisplay() {
-       // console.log(this.cash, this.cash.win);
+      // console.log(this.cash, this.cash.win);
       if (this.cash.win > 0) {
-          this.winDisplayed = 0;
+        this.winDisplayed = 0;
         var cashCounter = setInterval(() => {
           if (this.cash.win - this.winDisplayed >= 1000) {
             this.winDisplayed = this.winDisplayed + 995;
@@ -111,11 +83,9 @@ export default {
           if (this.cash.win - this.winDisplayed >= 1) {
             this.winDisplayed++;
           }
-   
-          if (this.winDisplayed === this.cash.win) {
-        
-            if (this.cash.win >= this.cash.baseBet) {
 
+          if (this.winDisplayed === this.cash.win) {
+            if (this.cash.win >= this.cash.baseBet) {
               this.$emit("playWin");
             }
             clearInterval(cashCounter);
@@ -123,7 +93,7 @@ export default {
         }, 30);
       } else {
         this.winDisplayed = 0;
-  
+
         this.$emit("endRound");
       }
     }
@@ -140,6 +110,77 @@ export default {
 </script>
 
 <style scoped>
+@-webkit-keyframes glow {
+  0% {
+    opacity: 0.5;
+    fill: #ff004c;
+  }
+  50% {
+    opacity: 1;
+    fill: #231f20;
+  }
+  100% {
+    opacity: 0.5;
+    fill: #ff004c;
+  }
+}
+@-moz-keyframes glow {
+  0% {
+    opacity: 0.5;
+    fill: #ff004c;
+  }
+  50% {
+    opacity: 1;
+    fill: #231f20;
+  }
+  100% {
+    opacity: 0.5;
+    fill: #ff004c;
+  }
+}
+@-o-keyframes glow {
+  0% {
+    opacity: 0.5;
+    fill: #ff004c;
+  }
+  50% {
+    opacity: 1;
+    fill: #231f20;
+  }
+  100% {
+    opacity: 0.5;
+    fill: #ff004c;
+  }
+}
+@keyframes glow {
+  0% {
+    opacity: 0.5;
+    fill: #ff004c;
+  }
+  50% {
+    opacity: 1;
+    fill: #231f20;
+  }
+  100% {
+    opacity: 0.5;
+    fill: #ff004c;
+  }
+}
+
+.glow {
+  fill: #231f20;
+}
+.pointer {
+  cursor: pointer;
+}
+.glow {
+  cursor: pointer;
+  -webkit-animation: glow 1.5s infinite; /* Safari 4+ */
+  -moz-animation: glow 1.5s infinite; /* Fx 5+ */
+  -o-animation: glow 1.5s infinite; /* Opera 12+ */
+  animation: glow 1.5s infinite; /* IE 10+, Fx 29+ */
+}
+
 @media all and (min-aspect-ratio: 970 / 600) {
   /*LANDSCAPE MODE*/
   .cashDisplays {
