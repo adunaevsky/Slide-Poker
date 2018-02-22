@@ -25,15 +25,15 @@ export default {
   },
   watch: {
     coinValue: function(val) {
-      table(tableValues, val);
-      tbl(tableValues,val);
+      table(tableValues, val, this.adjustFactor);
+      tbl(tableValues,val, this.adjustFactor);
     }
   },
-  props: ["coinValue"],
+  props: ["coinValue", "adjustFactor"],
   mounted() {
     setTimeout(() => {
-      table(tableValues, this.coinValue);
-      tbl(tableValues, this.coinValue);
+      table(tableValues, this.coinValue, this.adjustFactor);
+      tbl(tableValues, this.coinValue, this.adjustFactor);
       setTimeout(() => {
         this.showTable = "tblAnimation-enter-active loaded";
       }, 0);

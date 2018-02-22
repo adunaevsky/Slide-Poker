@@ -20,7 +20,7 @@
             <text text-anchor="end" font-weight="bold" font-size="9" x="43" y="20.5" fill="#FFFFFF" opacity="0.8">
                 BET</text>
             <text text-anchor="middle" font-weight="bold" font-size="9" x="73" y="20.5" fill="#FFFFFF" opacity="1" :class="{pointer:glow}" @click="updateBet()">
-                {{dollarFormat(cash.baseBet * cash.coinValue)}} + {{dollarFormat(cash.MDBet * cash.coinValue)}}</text>
+                {{dollarFormat(cash.coinValue * cash.base_coin_cost / cash.adjustFactor)}} + {{dollarFormat(cash.coinValue * cash.slideCost / cash.adjustFactor)}}</text>
 
             <text text-anchor="end" font-weight="bold" font-size="9" x="43" y="32.5" fill="#FFFFFF" opacity="0.8">
                 WIN</text>
@@ -48,7 +48,7 @@ import bus from "./../bus";
 export default {
   name: "cashDisplay",
   props: ["cash", "showValue", "glow"],
-  /*    props: ['baseBet', 'MDBet', 'bal', 'win', 'showValue'], */
+  /*    props: ['baseBet', 'slideBet', 'bal', 'win', 'showValue'], */
   data() {
     return {
       winDisplayed: 0
@@ -175,10 +175,10 @@ export default {
 }
 .glow {
   cursor: pointer;
-  -webkit-animation: glow 1.5s infinite; /* Safari 4+ */
-  -moz-animation: glow 1.5s infinite; /* Fx 5+ */
-  -o-animation: glow 1.5s infinite; /* Opera 12+ */
-  animation: glow 1.5s infinite; /* IE 10+, Fx 29+ */
+  -webkit-animation: glow 1s infinite; /* Safari 4+ */
+  -moz-animation: glow 1s infinite; /* Fx 5+ */
+  -o-animation: glow 1s infinite; /* Opera 12+ */
+  animation: glow 1s infinite; /* IE 10+, Fx 29+ */
 }
 
 @media all and (min-aspect-ratio: 970 / 600) {

@@ -7,7 +7,11 @@ var opts = {
     margins: { top: 0, right: 0, bottom: 0, left: 0 }
 };
 
-function tbl(value, coinValue) {
+function commaValue(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function tbl(value, coinValue, adjustFactor) {
 
     var chartW = Math.max(opts.width - opts.margins.left - opts.margins.right, 0.1);
     var chartH = Math.max(opts.height - opts.margins.top - opts.margins.bottom, 0.1);
@@ -24,7 +28,7 @@ function tbl(value, coinValue) {
             xShift: 4,
             filterData: function (v, i) {
                 return i >= 8;
-            
+
             }
         },
         {
@@ -50,7 +54,7 @@ function tbl(value, coinValue) {
 
         col.enter().append('rect')
             .attr('class', 'cell row')
-            .attr('width', 190)
+            .attr('width', 195)
             .attr('height', 30 * sf)
             .attr('x', c.xShift)
             .attr('rx', 10)
@@ -68,22 +72,22 @@ function tbl(value, coinValue) {
 
         col.enter().append('text')
             .attr('y', (y, i) => {
-                return ((33 * (i + 1) - 10)* sf)
+                return ((33 * (i + 1) - 10) * sf)
             })
-            .attr('x', c.xShift + 6)
+            .attr('x', c.xShift + 5)
             .attr('class', 'payTableText')
             .attr('font-size', 15)
             .text(d => d.text);
 
         col.enter().append('text')
             .attr('y', (y, i) => {
-                return ((33 * (i + 1) - 6) * sf)
+                return ((33 * (i + 1) - 9) * sf)
             })
-            .attr('x', c.xShift + 185)
+            .attr('x', c.xShift + 190)
             .attr('class', 'payTableText')
             .attr('font-size', 18)
             .attr('text-anchor', 'end')
-            .text(d => (d.reward * coinValue));
+            .text(d => (commaValue(d.reward * coinValue / adjustFactor)));
     });
 }
 

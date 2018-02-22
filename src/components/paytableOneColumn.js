@@ -7,10 +7,9 @@ var opts = {
     margins: { top: 0, right: 0, bottom: 0, left: 0 }
 };
 
-function table(value,coinValue) {
+function table(value,coinValue, adjustFactor) {
 
-   
-
+  
     var chartW = Math.max(opts.width - opts.margins.left - opts.margins.right, 0.1);
     var chartH = Math.max(opts.height - opts.margins.top - opts.margins.bottom, 0.1);
 
@@ -29,7 +28,7 @@ function table(value,coinValue) {
         .attr('class', 'cell row')
         .attr('width', 110 * sf)
         .attr('height', 15 * sf)
-        .attr('x', 4 * sf)
+        .attr('x', 7 * sf)
         .attr('rx', 4 * sf)
         .attr('ry', 4)
         .attr('y', (y, i) => {
@@ -55,12 +54,16 @@ function table(value,coinValue) {
         .attr('y', (y, i) => {
             return ((17 * (i + 1) - 5) * sf)
         })
-        .attr('x', 110 * sf)
+        .attr('x', 114 * sf)
         .attr('class', 'payTableText')
         .attr('font-size', 11 * sf)
         .attr('text-anchor', 'end')
-        .text(d => d.reward * coinValue);
+        .text(d => commaValue(d.reward * coinValue / adjustFactor));
 
+}
+
+function commaValue(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export { table as default }

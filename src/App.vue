@@ -1,7 +1,7 @@
 <template>
   <div class="fullScreen" :style="bgImg">
       
-    <pay-table v-bind:coinValue="cash.coinValue"></pay-table>
+    <pay-table v-bind:adjustFactor="cash.adjustFactor" v-bind:coinValue="cash.coinValue"></pay-table>
     <logo></logo>
     <menu-btns v-on:openInfo="openInfoBox"></menu-btns>
     <info v-on:closeInfo="infoBoxOpen = false" :open="infoBoxOpen" ></info>
@@ -9,7 +9,7 @@
    
 
     <cash-display v-bind:glow="stage.results || stage.newRound" v-on:updateBet="changeBet()" v-bind:cash="cash" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
-    <!-- <cash-display v-bind:MDBet="cash.MDBet" v-bind:baseBet="cash.baseBet" v-bind:bal="cash.balance" v-bind:win="cash.win" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
+    <!-- <cash-display v-bind:slideBet="cash.slideBet" v-bind:baseBet="cash.baseBet" v-bind:bal="cash.balance" v-bind:win="cash.win" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
  -->
     <div id="mainCards" class="cardArea" :class="slideSpecs">
       <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:skipFly="skipFlyIn"></main-cards>
@@ -268,17 +268,15 @@ export default {
       cash: {
         balance: 1000,
         totalBet: 0,
-        baseBet: 0,
-        MDBet: 0,
         betWin: 100,
         win: 0,
-        coinValue: 1,
-        coinOptions: [1, 3, 5, 10, 25, 50],
-        activeCoinOption: 0,
+        coinValue: 5,
+        coinOptions: [1, 5, 10, 25, 50, 100, 250],
+        activeCoinOption: 1,
+        adjustFactor: 1,
         slideCost: 2,
         base_coin_cost: 1
       },
-
       holdReason: "",
       defaultClasses: "cSize flip-container",
       topShiftClass: ["bCard1", "bCard2", "bCard3", "bCard4"],
@@ -790,7 +788,7 @@ return result;
     },
     recordReward(d) {
       //console.log(d.payMultiply, this.cash.coinValue * this.cash.base_coin_cost * d.payout * d.payMultiply, d.payout);
-      return this.cash.coinValue * this.cash.base_coin_cost * d.payout;
+      return this.cash.coinValue * this.cash.base_coin_cost * d.payout / this.cash.adjustFactor;
     },
     analyzeCash() {
       this.cash.win = 0;
@@ -998,8 +996,8 @@ return result;
     this.soundPlayerWins.volume = 0.5;
     this.soundEndRound = document.getElementById("soundLabel");
     /*     this.playIntro(); */
-    this.cash.baseBet = this.cash.coinValue * this.cash.base_coin_cost;
-    this.cash.MDBet = this.cash.coinValue * this.cash.slideCost;
+    /* this.cash.baseBet = this.cash.coinValue * this.cash.base_coin_cost;
+    this.cash.slideBet = this.cash.coinValue * this.cash.slideCost; */
 
     this.cycleBgImg();
   }
