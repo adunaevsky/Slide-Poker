@@ -135,7 +135,7 @@
         <source src="/static/sounds/m_multiCashOut.mp3" type="audio/mpeg">
       </audio>
       <audio id="soundBtnPress">
-        <source src="/static/sounds/mk_ballLaunch.mp3" type="audio/mpeg">
+        <source src="/static/sounds/button.ogg" type="audio/ogg">
       </audio>
       <audio id="chipClick">
         <source src="/static/sounds/chipClick.mp3" type="audio/mpeg">
@@ -271,7 +271,7 @@ export default {
         betWin: 100,
         win: 0,
         coinValue: 5,
-        coinOptions: [1, 5, 10, 25, 50, 100, 250],
+        coinOptions: [1, 5, 10, 25, 50, 100, 200],
         activeCoinOption: 1,
         adjustFactor: 1,
         slideCost: 2,
@@ -452,6 +452,7 @@ return result;
       } else {
         this.cash.activeCoinOption++;
       }
+      this.playChipClick();
       this.cash.coinValue = this.cash.coinOptions[this.cash.activeCoinOption];
     },
     removeRevCards(handNum) {
