@@ -5,12 +5,7 @@
     <logo></logo>
     <menu-btns v-on:openInfo="openInfoBox"></menu-btns>
     <info v-on:closeInfo="infoBoxOpen = false" :open="infoBoxOpen" ></info>
-
-   
-
     <cash-display v-bind:glow="stage.results || stage.newRound" v-on:updateBet="changeBet()" v-bind:cash="cash" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
-    <!-- <cash-display v-bind:slideBet="cash.slideBet" v-bind:baseBet="cash.baseBet" v-bind:bal="cash.balance" v-bind:win="cash.win" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
- -->
     <div id="mainCards" class="cardArea" :class="slideSpecs">
       <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:skipFly="skipFlyIn"></main-cards>
     </div>
@@ -41,16 +36,13 @@
             <text v-if="r.rank > 0" class="labelCash payTableText" text-anchor="end" font-weight="bold" font-size="7" x="85" y="8.5" fill="#02F53A"  :opacity="reviewHand[index] === true ? 1 : 0.4">
               {{dollarFormat(r.reward)}}
             </text>
-    
                 <g v-if="r.payMultiply > 1 && r.rank > 0" >
                           <circle cx="96" cy="6" r="5.5" stroke="yellow" stroke-width="1" fill="red" :opacity="reviewHand[index] === true ? 1 : 0.4"></circle>
                 <text  class="payTableText" text-anchor="middle" font-weight="bold" font-size="6" x="96" y="8.5" fill="#ffffff"  :opacity="reviewHand[index] === true ? 1 : 0.4">
                             ×{{r.payMultiply}}</text>
                 </g>
-           
           </svg>
         </div>
-        
       </div>
 
 <tap-labels v-if="stage.results && stage.animationDone && !stage.singleResult"></tap-labels>
@@ -70,8 +62,6 @@
         </svg>
       </div>
     </div>
-
-
 
     <div class="btnHeight" :style="{display: stage.newRound || stage.results ? 'block': 'none'}" >
       <div class="btnBase" v-on:click="deal">
@@ -281,25 +271,10 @@ export default {
       defaultClasses: "cSize flip-container",
       topShiftClass: ["bCard1", "bCard2", "bCard3", "bCard4"],
       mCards: dealer.mainCards,
-      //  bCards: dealer.bonusCards, //to fix!!!
-      showMainCard: [false, false, false, false, false, false, false, false],
-      /* showBonusCard: [false, false, false, false, false], */
-      mainFlip: [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
+      showMainCard: Array(8).fill(false),
+      mainFlip: Array(11).fill(false),
       originalSlide: "",
       reviewHand: [false, false, false, false],
-      /*  bonusFlip: [false, false, false, false, false], */
       cPos: cardPos,
       labelPos: ["label1", "label2", "label3", "label4", "label5"],
       holds: cardHolds,
@@ -349,39 +324,10 @@ export default {
       for (var slideType in this.reviewSlides) {
         result[slideType] = this.reviewSlides[slideType];
       }
-
-      //  console.log(result)
-
       return result;
     }
   },
   methods: {
-    /*     getBGNum(s){
-console.log(s);
-var result = s.slice(35,36);
-console.log(result, s);
-return result;
-    }, */
-    /*     setLabelTopShift(r, index) {
-      if (this.stage.results) {
-        return this.topShiftClass[index];
-      } else {
-        if (this.reviewHand[index]) {
-          return this.topShiftClass[0];
-        }
-        if (this.reviewHand.indexOf(true) > index) {
-          return this.topShiftClass[index + 1];
-        }
-        return this.topShiftClass[index];
-      }
-      if (this.reviewHand[index]) {
-        return this.topShiftClass[0];
-      }
-      if (this.reviewHand.indexOf(true) > index) {
-        return this.topShiftClass[index + 1];
-      }
-      return this.topShiftClass[index];
-    }, */
     reviewCards(n) {
       if (this.stage.results && this.stage.animationDone) {
         var currentHand = this.reviewHand.indexOf(true);
@@ -423,7 +369,6 @@ return result;
                 }, revealNum * 100);
                 revealNum++;
               }
-
               if (s === this.showMainCard.length - 1) {
                 setTimeout(() => {
                   this.stage.animationDone = true;
@@ -431,7 +376,6 @@ return result;
               }
             }
           }, 800);
-
           for (let c = 0; c < this.showMainCard.length; c++) {
             if (
               c >= cardLimits.fCard &&
@@ -499,8 +443,6 @@ return result;
     deal() {
       if (this.stage.results) {
         this.reset();
-        /*        this.stage.newRound = false;
-               this.stage.results = false; */
         this.playBtnSound();
 
         setTimeout(() => {
@@ -515,9 +457,7 @@ return result;
       this.stage.newRound = false;
       this.cash.totalBet =
         this.cash.coinValue * (this.cash.base_coin_cost + this.cash.slideCost);
-
       this.cash.balance = this.cash.balance - this.cash.totalBet;
-
       for (let i = 0; i < 5; i++) {
         setTimeout(() => {
           this.showMainCard.splice(i + 3, 1, true);
@@ -534,8 +474,6 @@ return result;
       }
     },
     swapUnheldCards() {
-      // console.log('swapping??', this.holds)
-
       var cardsRemoved = 0,
         totalRemove = 0,
         removedCardsIndex = [];
@@ -545,22 +483,16 @@ return result;
             a.forEach((a, s) => {
               if (s > 2 && !a.active && s <= 7) {
                 totalRemove++;
-                // console.log(totalRemove);
               }
             });
-            // console.log(totalRemove);
             if (totalRemove === 0) {
-              //  console.log('got here. 1');
               this.determineSlide();
-              // this.analyzeCash();
             }
           }
-
           if (!held.active) {
             cardsRemoved++;
             setTimeout(() => {
               this.showMainCard.splice(i, 1, false);
-
               dealer.swapCard(i); /* *** */
               bus.$emit("cardsUpdated");
               this.playDealSound();
@@ -570,15 +502,12 @@ return result;
             }, 200 * cardsRemoved);
             removedCardsIndex.push(i);
           }
-          //  console.log(i, totalRemove, held.active, removedCardsIndex);
         }
       });
-
       setTimeout(() => {
         removedCardsIndex.forEach((cardIndexNum, i, a) => {
           if (i <= a.length - 1) {
             setTimeout(() => {
-              /* console.log(this.showMainCard, i, a.length); */
               this.showMainCard.splice(cardIndexNum, 1, true);
               this.playDealSound();
               if (i === a.length - 1) {
@@ -588,20 +517,16 @@ return result;
           }
         });
       }, 200 * totalRemove + 500);
-
       this.stage.cardSwapComplete = true;
     },
     noSlide() {
-      // this.finalResults = [];
       this.finalResults.push(finalResults.fiveCards(this.mCards.slice(3, 8)));
       this.finalResults[0].reward = this.recordReward(this.finalResults[0]);
       this.stage.singleResult = true;
       this.stage.results = true;
-      // this.stage.showSlideBtns = false;
       this.analyzeCash();
     },
     slideCards(direction, rounds) {
-      // this.stage.showSlideBtns = false;
       this.originalSlide = direction;
       if (direction === "right") {
         this.slideRight(rounds);
@@ -682,7 +607,6 @@ return result;
       }
     },
     slideRight(rounds) {
-      //  this.finalResults = [];
       this.finalResults.push(finalResults.fiveCards(this.mCards.slice(3, 8)));
       this.finalResults[0].payMultiply = 1;
       this.finalResults[0].reward = this.recordReward(this.finalResults[0]);
@@ -711,7 +635,6 @@ return result;
               this.finalResults.push(
                 finalResults.fiveCards(this.mCards.slice(2 - i, 7 - i))
               );
-              //  this.finalResults[i + 1].payMultiply = dealer.getMultiply();
               this.finalResults[i + 1].reward = this.recordReward(
                 this.finalResults[i + 1]
               );
@@ -730,7 +653,6 @@ return result;
       }
     },
     slideLeft(rounds) {
-      //  this.finalResults = [];
       this.finalResults.push(finalResults.fiveCards(this.mCards.slice(3, 8)));
       this.finalResults[0].payMultiply = 1;
       this.finalResults[0].reward = this.recordReward(this.finalResults[0]);
@@ -759,7 +681,6 @@ return result;
               this.finalResults.push(
                 finalResults.fiveCards(this.mCards.slice(i + 4, i + 9))
               );
-              //  this.finalResults[i + 1].payMultiply = dealer.getMultiply();
               this.finalResults[i + 1].reward = this.recordReward(
                 this.finalResults[i + 1]
               );
@@ -788,14 +709,17 @@ return result;
       }
     },
     recordReward(d) {
-      //console.log(d.payMultiply, this.cash.coinValue * this.cash.base_coin_cost * d.payout * d.payMultiply, d.payout);
-      return this.cash.coinValue * this.cash.base_coin_cost * d.payout / this.cash.adjustFactor;
+      return (
+        this.cash.coinValue *
+        this.cash.base_coin_cost *
+        d.payout /
+        this.cash.adjustFactor
+      );
     },
     analyzeCash() {
       this.cash.win = 0;
       this.finalResults.forEach(d => {
         this.cash.win = this.cash.win + d.reward * d.payMultiply;
-        //  console.log(d);
       });
 
       this.cash.balance = this.cash.balance + this.cash.win;
@@ -814,7 +738,6 @@ return result;
     },
     reset() {
       this.soundClearCards.play();
-
       for (var slideType in this.reviewSlides) {
         this.reviewSlides[slideType] = false;
       }
@@ -841,10 +764,7 @@ return result;
 
       for (var i = 0; i < 11; i++) {
         this.mCards.splice(i, 1, "");
-        /*    this.bCards.splice(i, 1, ""); */
-        /*    this.showBonusCard.splice(i, 1, false); */
         this.mainFlip.splice(i, 1, false);
-        /*  this.bonusFlip.splice(i, 1, false); */
         this.showMainCard.splice(i, 1, false);
         this.holds[i].active = false;
         this.holds[i].display = true;
@@ -853,10 +773,8 @@ return result;
     flipMainCards(initialDelay, cards, swapComplete) {
       _.forEach(cards, (c, i, a) => {
         if (i <= a.length - 1) {
-          //  console.log('got here.', i,'swapComplete: ', swapComplete)
           if (this.mCards[c] === "") {
             dealer.getCard(c, this.selectedTest, "mainCards");
-            /*  dealer.getCard(c); */
             bus.$emit("cardsUpdated");
           }
           setTimeout(() => {
@@ -878,16 +796,13 @@ return result;
     },
     setHolds() {
       var cards = [];
-
       for (var i = 0; i < dealer.mainCards.length; i++) {
         if (i >= 3 && i <= 7) {
           cards.push(dealer.mainCards[i]);
         }
       }
-
       var hold = getHolds.setHolds(cards);
       this.holdReason = hold.reason;
-
       hold.result.forEach((h, i) => {
         cardHolds[i + 3].active = h;
       });
@@ -983,7 +898,7 @@ return result;
         ".jpg')";
     }
   },
-  mounted: function() {
+  mounted() {
     this.soundFlip = document.getElementById("soundFlip");
     this.soundClearCards = document.getElementById("soundClearCards");
     this.soundDeal = document.getElementById("dSoundDeal");
@@ -996,10 +911,6 @@ return result;
     this.soundPlayerWins = document.getElementById("playerWins");
     this.soundPlayerWins.volume = 0.5;
     this.soundEndRound = document.getElementById("soundLabel");
-    /*     this.playIntro(); */
-    /* this.cash.baseBet = this.cash.coinValue * this.cash.base_coin_cost;
-    this.cash.slideBet = this.cash.coinValue * this.cash.slideCost; */
-
     this.cycleBgImg();
   }
 };

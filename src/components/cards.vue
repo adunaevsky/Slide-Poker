@@ -1030,7 +1030,6 @@ export default {
   /*SQUARE (DESKTOP) MODE*/
 
 .changeBG {
-
   left: 0.2rem;
   }
 
