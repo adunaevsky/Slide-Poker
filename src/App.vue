@@ -6,8 +6,9 @@
     <menu-btns v-on:openInfo="openInfoBox"></menu-btns>
     <info v-on:closeInfo="infoBoxOpen = false" :open="infoBoxOpen" ></info>
     <cash-display v-bind:glow="stage.results || stage.newRound" v-on:updateBet="changeBet()" v-bind:cash="cash" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
+   
     <div id="mainCards" class="cardArea" :class="slideSpecs">
-      <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip" v-bind:skipFly="skipFlyIn"></main-cards>
+      <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip"></main-cards>
     </div>
 
     <div id="holdButtons" class="cardArea" :class="slideSpecs" >
@@ -226,7 +227,7 @@ export default {
   },
   data() {
     return {
-      bgImg: "background-image: url('./static/BBGG1.jpg')",
+      bgImg: "background-image: url('./static/BBGGR1.jpg')",
       bgImgs: ["1", "2", "3"],
       currentImg: 2,
       testScenarios: tests,
@@ -253,7 +254,6 @@ export default {
         left: [false, false, false],
         right: [false, false, false]
       },
-      skipFlyIn: false,
       /*  MDIndex: -1, */
       cash: {
         balance: 1000,
@@ -455,9 +455,12 @@ export default {
     prepDeckAndShowMainCards() {
       dealer.newDeck();
       this.stage.newRound = false;
+
       this.cash.totalBet =
         this.cash.coinValue * (this.cash.base_coin_cost + this.cash.slideCost);
+
       this.cash.balance = this.cash.balance - this.cash.totalBet;
+
       for (let i = 0; i < 5; i++) {
         setTimeout(() => {
           this.showMainCard.splice(i + 3, 1, true);
@@ -743,7 +746,6 @@ export default {
       }
       this.option.bestSlide = "";
       dealer.newDeck();
-      this.skipFlyIn = false;
       this.finalResults = [];
       this.stage.mainCardsDealt = false;
       this.stage.removeUnheldCards = false;
@@ -893,7 +895,7 @@ export default {
         this.currentImg++;
       }
       this.bgImg =
-        "background-image: url('./static/BBGG" +
+        "background-image: url('./static/BBGGR" +
         this.bgImgs[this.currentImg] +
         ".jpg')";
     }
@@ -932,7 +934,7 @@ body {
   width: 100%;
   overflow: hidden;
 
-  background: #0000a0;
+  background: #910301;
 }
 
 .fullScreen,
@@ -943,7 +945,7 @@ body {
   background-size: 100% 100%;
   background-repeat: no-repeat;
 
-  background-color: #0000a0;
+  background-color: #910301;
 }
 
 .fade-enter-active,

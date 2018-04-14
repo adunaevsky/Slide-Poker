@@ -1,12 +1,6 @@
 <template>
     <div class="mainCards">
-        <!--   {{cards}} -->
-<!--         <transition name="cardAnimation" v-for="(cardPos,index) in cardPositions">
-            <div v-if="showCard[index]" :class="[defaultClasses, cardPos, flip[index] ? 'flip' : '' ]" v-flip="cards[index]">
-              
-            </div>
-        </transition> -->
-                <transition name="cardAnimation" v-for="(cardPos,index) in cardPositions">
+        <transition name="cardAnimation" v-for="(cardPos,index) in cardPositions">
             <div v-if="showCard[index]" :class="[defaultClasses, cardPos, flip[index] ? 'flip' : '' ]">
               <div class="flipper">
                 <div class="front cBack1"></div>
@@ -22,11 +16,10 @@ import bus from "./../bus";
 
 export default {
   name: "mainCards",
-  props: ["flip", "cards", "showCard", "cardPositions", "skipFly"],
+  props: ["flip", "cards", "showCard", "cardPositions"],
   data() {
     return {
       defaultClasses: "cSize flip-container",
-      flyInTime: 500,
       cardRank: []
     };
   },
@@ -1726,7 +1719,8 @@ export default {
 
 .cBack1 {
   /* background-image: url("../assets/cards/RG-CardBack-700.png"); */
-  background-image: url("../assets/cards/RG-CardBack-800.png");
+  background-image: url("../assets/cards/CardBackTribe.png");
+ /*  background-image: url("../assets/cards/RG-CardBack-800.png"); */
 
  /*  background-image: url("../assets/cards/cardBack2.svg"); */
   /*   background-image: url("../assets/cards/cardBack_YourLogo.png"); */

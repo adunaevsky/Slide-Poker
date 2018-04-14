@@ -18,9 +18,6 @@ class dealerPerson {
         { limit: 1000, value: 10 }
     ];
 
-/*     clearCards() {
-        this.mainCards = ['', '', '', '', '', '', '', '', '', '', ''];
-    } */
     getCard(cardNum, testCase, cardTypes) {
     //  console.log( this.mainCards);
 
