@@ -154,7 +154,7 @@
     </div>
 
     <tap-labels
-      v-if="stage.results && stage.animationDone && !stage.singleResult"
+      v-if="stage.results && stage.animationDone && !stage.singleResult && !stage.bonusDone"
     ></tap-labels>
     <slide-btns
       v-if="stage.slideChoice"
@@ -314,9 +314,9 @@
     <transition name="fade">
       <water-mark v-if="stage.removeUnheldCards === false"></water-mark>
     </transition>
-    <again v-if="stage.results && !bonusRound" v-on:deal="deal"></again>
+    <again v-if="stage.results && !stage.startBonus" v-on:deal="deal"></again>
     <!-- ENABLE WHEN IN PROD... annoying flashing. -->
-    <!--     <flashBonus v-if="stage.results && bonusRound" v-on:playBonus="playBonus"></flashBonus> -->
+        <flashBonus v-if="stage.results && stage.startBonus" v-on:playBonus="playBonus"></flashBonus>
 
     <div style="display: none">
       <audio id="soundFlip">
@@ -465,6 +465,7 @@ export default {
         animationDone: true,
         slideChoice: false,
         startBonus: false,
+        bonusDone: false
       },
       slide: {
         left: [false, false, false],

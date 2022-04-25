@@ -25,6 +25,8 @@ var bonus = {
             var bonusAnalysis = bonusLogic.fiveCards(test);
             console.log(bonusAnalysis);
             this.stage.startBonus = bonusAnalysis.isBonus;
+            
+            this.stage.bonusDone = false;
             this.nonBonusIndexes = bonusAnalysis.removeCardIndex;
 
         },
@@ -32,6 +34,7 @@ var bonus = {
             var test = finalResults.fiveCards(this.mCards.slice(this.finalHandIndex.start, this.finalHandIndex.end));
             console.log(test)
             this.stage.startBonus = false;
+            this.stage.bonusDone = true;
             this.stage.results = true;
         }
     }
