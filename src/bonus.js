@@ -38,7 +38,7 @@ var bonus = {
             this.finalResults = [];
 
             if (checkFinal.rank === 1) {
-
+               // checkFinal.label = "BONUS Royal Flush!";
                 checkFinal.reward = this.recordReward(checkFinal);
 
                 this.finalResults = [checkFinal];
