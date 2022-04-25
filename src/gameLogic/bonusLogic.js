@@ -10,7 +10,7 @@ var bonusLogic = {
         });
 
 
-       return this.findAlmostRoyal(cards);
+        return this.findAlmostRoyal(cards);
 
 
 
@@ -24,8 +24,9 @@ var bonusLogic = {
                 if (acc[val.suit]) {
                     acc[val.suit].count++;
                     acc[val.suit].index.push(i);
+                    acc[val.suit].values.push(val.value);
                 } else {
-                    acc[val.suit] = { count: 1, index: [i] };
+                    acc[val.suit] = { count: 1, index: [i], values: [val.value] };
                 }
             } else {
                 acc.notRoyalIndex.push(i);
@@ -47,38 +48,28 @@ var bonusLogic = {
 
         }
 
+        var missingCardsForRoyal = result ? this.determineMissingCards(suitCount[royalSuit].values, royalSuit) : [];
+
 
         return {
             isBonus: result,
             removeCardIndex: suitCount.notRoyalIndex,
-            falshCardIndex: result ? suitCount[royalSuit].index : []
+            flashCardIndex: result ? suitCount[royalSuit].index : [],
+            royalSuit: royalSuit,
+            missingCardsForRoyal: missingCardsForRoyal
         }
 
 
     },
-    findSameSuits(card) {
-        var result = false;
-
-        var suitCount = card.reduce((acc, val) => {
-            if (val.value > 9) {
-                if (acc[val.suit]) {
-                    acc[val.suit]++;
-                } else {
-                    acc[val.suit] = 1;
-                }
-            }
-            return acc;
-        }, {});
-
-
-
-        for (var key in suitCount) {
-            if (suitCout[key] == 3 || suitCout[key] == 4) {
-                result = true;
+    determineMissingCards(values, royalSuit) {
+      
+        var result = [];
+        for (var i = 10; i < 15; i++) {
+            if (values.indexOf(i) === -1) {
+                result.push(royalSuit + i);
             }
         }
-
-        return result
+        return result;
     }
 
 

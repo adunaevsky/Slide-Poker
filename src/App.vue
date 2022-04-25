@@ -251,6 +251,22 @@
 
     <!-- FOR TESTING (start) -->
     <button
+      @click="option.winBonus = !option.winBonus"
+      style="
+        position: absolute;
+        bottom: 0%;
+        width: 10rem;
+        font-size: 1rem;
+        cursor: pointer;
+      "
+    >
+      <span v-if="option.winBonus">☑</span>
+      <span v-if="!option.winBonus">☐</span>
+      Win Bonus
+      <span v-if="!option.winBonus"> OFF</span>
+      <span v-if="option.winBonus"> ON</span>
+    </button>
+<!--     <button
       @click="option.autohold = !option.autohold"
       style="
         position: absolute;
@@ -265,7 +281,7 @@
       Auto hold
       <span v-if="!option.autohold"> is OFF</span>
       <span v-if="option.autohold"> is ON</span>
-    </button>
+    </button> -->
     <select
       v-model="selectedTest"
       style="position: absolute; bottom: 0.5%; left: 10.5rem; width: 10rem"
@@ -450,7 +466,8 @@ export default {
       option: {
         autohold: false,
         autoplay: false,
-        bestSlide: "",
+        bestSlide: "", 
+        winBonus: true
       },
       infoBoxOpen: false,
       stage: {
@@ -1130,7 +1147,7 @@ export default {
       this.nonBonusIndexes.forEach((i, index) => {
         setTimeout(() => {
           this.showMainCard.splice(i + this.finalHandIndex.start, 1, false);
-          dealer.swapCard(i + this.finalHandIndex.start);
+          dealer.swapCard(i + this.finalHandIndex.start, this.option.winBonus ? this.missingCardsForRoyal[index] : undefined);
           this.playDealSound();
 
           if (index === this.nonBonusIndexes.length - 1) {

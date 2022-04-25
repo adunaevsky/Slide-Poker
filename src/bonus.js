@@ -13,7 +13,8 @@ var bonus = {
                 start: undefined,
                 end: undefined
             },
-            nonBonusIndexes: undefined
+            nonBonusIndexes: undefined,
+            missingCardsForRoyal: undefined
 
         }
     },
@@ -24,6 +25,7 @@ var bonus = {
             var test = this.mCards.slice(this.finalHandIndex.start, this.finalHandIndex.end);
             var bonusAnalysis = bonusLogic.fiveCards(test);
             console.log(bonusAnalysis);
+            this.missingCardsForRoyal = bonusAnalysis.missingCardsForRoyal;
             this.stage.startBonus = bonusAnalysis.isBonus;
             
             this.stage.bonusDone = false;
