@@ -222,12 +222,11 @@
         <btn-right-deal></btn-right-deal>
       </div>
 
- <div v-if="bonusRound" class="btnBase" v-on:click="playBonus">
+      <div v-if="bonusRound" class="btnBase" v-on:click="playBonus">
         <bonus-btn></bonus-btn>
       </div>
-
     </div>
-<!--     <div
+    <!--     <div
       class="btnHeight"
       :style="{ display: bonusRound ? 'block' : 'none' }"
     >
@@ -235,9 +234,6 @@
         <bonus-btn></bonus-btn>
       </div>
     </div> -->
-
-
-
 
     <div
       class="btnHeight"
@@ -319,7 +315,8 @@
       <water-mark v-if="stage.removeUnheldCards === false"></water-mark>
     </transition>
     <again v-if="stage.results && !bonusRound" v-on:deal="deal"></again>
-    <flashBonus v-if="stage.results && bonusRound" v-on:playBonus="playBonus"></flashBonus>
+    <!-- ENABLE WHEN IN PROD... annoying flashing. -->
+    <!--     <flashBonus v-if="stage.results && bonusRound" v-on:playBonus="playBonus"></flashBonus> -->
 
     <div style="display: none">
       <audio id="soundFlip">
@@ -746,7 +743,7 @@ export default {
       this.stage.singleResult = true;
       this.stage.results = true;
       this.finalHandIndex.start = 3;
-      this.finalHandIndex.end =8;
+      this.finalHandIndex.end = 8;
       this.checkForBonus();
       this.analyzeCash();
     },
@@ -953,7 +950,6 @@ export default {
       this.cash.balance = this.cash.balance + this.cash.win;
 
       bus.$emit("updateCashDisplay", this.cash);
-
     },
     draw() {
       this.stage.removeUnheldCards = true;
@@ -1124,6 +1120,33 @@ export default {
         "background-image: url('./static/BBGG" +
         this.bgImgs[this.currentImg] +
         ".jpg')";
+    },
+
+    playBonus() {
+      console.log("start bonus!");
+
+      this.nonBonusIndexes.forEach((i, index) => {
+        setTimeout(() => {
+          this.showMainCard.splice(i + this.finalHandIndex.start, 1, false);
+          dealer.swapCard(i + this.finalHandIndex.start);
+          this.playDealSound();
+
+          if (index === this.nonBonusIndexes.length - 1) {
+            setTimeout(() => {
+              this.dealBonusCards();
+            }, 800);
+          }
+        }, 200 * index);
+      });
+    },
+    dealBonusCards() {
+      this.nonBonusIndexes.forEach((i, index) => {
+        setTimeout(() => {
+          this.showMainCard.splice(i + this.finalHandIndex.start, 1, true);
+          this.playDealSound();
+          bus.$emit("cardsUpdated");
+        }, 200 * index);
+      });
     },
   },
   mounted() {

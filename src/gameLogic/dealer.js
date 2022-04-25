@@ -72,10 +72,8 @@ class dealerPerson {
     }
 
     swapCard(cardNum) {
-
-        this.mainCards[cardNum] = this.deck[this.deck.length - 1];
+             this.mainCards[cardNum] = this.deck[this.deck.length - 1];
         this.deck.pop();
-
     }
 
     newDeck() {
