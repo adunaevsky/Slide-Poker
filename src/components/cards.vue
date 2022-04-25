@@ -1718,8 +1718,8 @@ export default {
 }
 
 .cBack1 {
-  /* background-image: url("../assets/cards/RG-CardBack-700.png"); */
-  background-image: url("../assets/cards/CardBackTribe.png");
+  background-image: url("../assets/cards/RG-CardBack-700.png");
+  /* background-image: url("../assets/cards/CardBackTribe.png"); */
  /*  background-image: url("../assets/cards/RG-CardBack-800.png"); */
 
  /*  background-image: url("../assets/cards/cardBack2.svg"); */

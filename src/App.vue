@@ -1,157 +1,368 @@
 <template>
   <div class="fullScreen" :style="bgImg">
-      
-    <pay-table v-bind:adjustFactor="cash.adjustFactor" v-bind:coinValue="cash.coinValue"></pay-table>
+    <pay-table
+      v-bind:adjustFactor="cash.adjustFactor"
+      v-bind:coinValue="cash.coinValue"
+    ></pay-table>
     <logo></logo>
     <menu-btns v-on:openInfo="openInfoBox"></menu-btns>
-    <info v-on:closeInfo="infoBoxOpen = false" :open="infoBoxOpen" ></info>
-    <cash-display v-bind:glow="stage.results || stage.newRound" v-on:updateBet="changeBet()" v-bind:cash="cash" v-on:playWin="playWinMsg()" v-on:endRound="endRound()" v-bind:showValue="stage.results"></cash-display>
-   
+    <info v-on:closeInfo="infoBoxOpen = false" :open="infoBoxOpen"></info>
+    <cash-display
+      v-bind:glow="stage.results || stage.newRound"
+      v-on:updateBet="changeBet()"
+      v-bind:cash="cash"
+      v-on:playWin="playWinMsg()"
+      v-on:endRound="endRound()"
+      v-bind:showValue="stage.results"
+    ></cash-display>
+
     <div id="mainCards" class="cardArea" :class="slideSpecs">
-      <main-cards v-bind:cardPositions="cPos" v-bind:showCard="showMainCard" v-bind:cards="mCards" v-bind:flip="mainFlip"></main-cards>
+      <main-cards
+        v-bind:cardPositions="cPos"
+        v-bind:showCard="showMainCard"
+        v-bind:cards="mCards"
+        v-bind:flip="mainFlip"
+      ></main-cards>
     </div>
 
-    <div id="holdButtons" class="cardArea" :class="slideSpecs" >
+    <div id="holdButtons" class="cardArea" :class="slideSpecs">
       <div class="mainCards">
-        <div v-for="(hold,i) in holds" class="cSize" :class="hold.class" @click="updateHold(i)" v-if="i < 8 && i > 2">
-          <div class="holdButtons" :style="{display: setHoldDisplay(hold )=== true ? 'block':'none'}">
+        <div
+          v-for="(hold, i) in holds"
+          class="cSize"
+          :class="hold.class"
+          @click="updateHold(i)"
+          v-if="i < 8 && i > 2"
+        >
+          <div
+            class="holdButtons"
+            :style="{
+              display: setHoldDisplay(hold) === true ? 'block' : 'none',
+            }"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30">
-              <rect style="fill:#FFE401; stroke:#BB2601; stroke-width:3;" x="20" y="5" rx="5" width="60" height="20" />
-              <text text-anchor="middle" font-weight="900" font-size="15" x="50" y="20.5" fill="#000000" opacity="1">
-                HELD</text>
+              <rect
+                style="fill: #ffe401; stroke: #bb2601; stroke-width: 3"
+                x="20"
+                y="5"
+                rx="5"
+                width="60"
+                height="20"
+              />
+              <text
+                text-anchor="middle"
+                font-weight="900"
+                font-size="15"
+                x="50"
+                y="20.5"
+                fill="#000000"
+                opacity="1"
+              >
+                HELD
+              </text>
             </svg>
           </div>
         </div>
       </div>
     </div>
 
-      <div class="cardArea"   v-for="(r,index) in finalResults"  :class="topShiftClass[index]" >
-             
-        <div v-if="stage.multiResults" style="position: absolute;" class="label">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 12"   @click="reviewCards(index)">
-            <rect :fill="r.fill" style="stroke:#bababa; stroke-miterlimit:10;" x="1" y="1" rx="2" width="89" height="10" :opacity="reviewHand[index] === true ? 1 : 0.4" />
-            <text v-if="r.rank > 0" class="payTableText" text-anchor="left" font-weight="bold" font-size="6" x="5" y="8.5" fill="#ffffff"  :opacity="reviewHand[index] === true ? 1 : 0.4">
-              {{r.label}}</text>
-            <text v-if="r.rank === 0" class="payTableText" text-anchor="middle" font-weight="bold" font-size="7" x="45" y="8.5" fill="#ffffff" :opacity="reviewHand[index] === true ? 1 : 0.4">
-              {{r.label}}</text>
-            <text v-if="r.rank > 0" class="labelCash payTableText" text-anchor="end" font-weight="bold" font-size="7" x="85" y="8.5" fill="#02F53A"  :opacity="reviewHand[index] === true ? 1 : 0.4">
-              {{dollarFormat(r.reward)}}
+    <div
+      class="cardArea"
+      v-for="(r, index) in finalResults"
+      :class="topShiftClass[index]"
+    >
+      <div v-if="stage.multiResults" style="position: absolute" class="label">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 110 12"
+          @click="reviewCards(index)"
+        >
+          <rect
+            :fill="r.fill"
+            style="stroke: #bababa; stroke-miterlimit: 10"
+            x="1"
+            y="1"
+            rx="2"
+            width="89"
+            height="10"
+            :opacity="reviewHand[index] === true ? 1 : 0.4"
+          />
+          <text
+            v-if="r.rank > 0"
+            class="payTableText"
+            text-anchor="left"
+            font-weight="bold"
+            font-size="6"
+            x="5"
+            y="8.5"
+            fill="#ffffff"
+            :opacity="reviewHand[index] === true ? 1 : 0.4"
+          >
+            {{ r.label }}
+          </text>
+          <text
+            v-if="r.rank === 0"
+            class="payTableText"
+            text-anchor="middle"
+            font-weight="bold"
+            font-size="7"
+            x="45"
+            y="8.5"
+            fill="#ffffff"
+            :opacity="reviewHand[index] === true ? 1 : 0.4"
+          >
+            {{ r.label }}
+          </text>
+          <text
+            v-if="r.rank > 0"
+            class="labelCash payTableText"
+            text-anchor="end"
+            font-weight="bold"
+            font-size="7"
+            x="85"
+            y="8.5"
+            fill="#02F53A"
+            :opacity="reviewHand[index] === true ? 1 : 0.4"
+          >
+            {{ dollarFormat(r.reward) }}
+          </text>
+          <g v-if="r.payMultiply > 1 && r.rank > 0">
+            <circle
+              cx="96"
+              cy="6"
+              r="5.5"
+              stroke="yellow"
+              stroke-width="1"
+              fill="red"
+              :opacity="reviewHand[index] === true ? 1 : 0.4"
+            ></circle>
+            <text
+              class="payTableText"
+              text-anchor="middle"
+              font-weight="bold"
+              font-size="6"
+              x="96"
+              y="8.5"
+              fill="#ffffff"
+              :opacity="reviewHand[index] === true ? 1 : 0.4"
+            >
+              ×{{ r.payMultiply }}
             </text>
-                <g v-if="r.payMultiply > 1 && r.rank > 0" >
-                          <circle cx="96" cy="6" r="5.5" stroke="yellow" stroke-width="1" fill="red" :opacity="reviewHand[index] === true ? 1 : 0.4"></circle>
-                <text  class="payTableText" text-anchor="middle" font-weight="bold" font-size="6" x="96" y="8.5" fill="#ffffff"  :opacity="reviewHand[index] === true ? 1 : 0.4">
-                            ×{{r.payMultiply}}</text>
-                </g>
-          </svg>
-        </div>
-      </div>
-
-<tap-labels v-if="stage.results && stage.animationDone && !stage.singleResult"></tap-labels>
-<slide-btns v-if="stage.slideChoice"  v-on:slideRight="slideChoice('right')" v-on:slideLeft="slideChoice('left')"/>
-
-    <div id="singleResult" class="singleResult" v-if="stage.singleResult">
-
-      <div style="position:absolute; left: 14.8%; width: 60%;">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 60">
-          <rect :fill="finalResults[0].fill" style="stroke:#bababa; stroke-miterlimit:10;" x="30" y="25" rx="2" width="105" height="10" />
-          <text v-if="finalResults[0].rank > 0" class="payTableText" text-anchor="start" font-weight="bold" font-size="7" x="33" y="32.5" fill="#ffffff">
-            {{finalResults[0].label}}</text>
-          <text v-if="finalResults[0].rank === 0" class="payTableText" text-anchor="middle" font-weight="bold" font-size="8" x="82" y="32.5" fill="#ffffff">
-            {{finalResults[0].label}}</text>
-          <text v-if="finalResults[0].rank > 0" class="labelCash payTableText" text-anchor="end" font-weight="bold" font-size="7" x="130" y="32.5" fill="#02F53A">
-            {{dollarFormat(finalResults[0].reward)}}</text>
+          </g>
         </svg>
       </div>
     </div>
 
-    <div class="btnHeight" :style="{display: stage.newRound || stage.results ? 'block': 'none'}" >
-      <div class="btnBase" v-on:click="deal">
-        <btn-right-deal></btn-right-deal>
+    <tap-labels
+      v-if="stage.results && stage.animationDone && !stage.singleResult"
+    ></tap-labels>
+    <slide-btns
+      v-if="stage.slideChoice"
+      v-on:slideRight="slideChoice('right')"
+      v-on:slideLeft="slideChoice('left')"
+    />
+
+    <div id="singleResult" class="singleResult" v-if="stage.singleResult">
+      <div style="position: absolute; left: 14.8%; width: 60%">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 60">
+          <rect
+            :fill="finalResults[0].fill"
+            style="stroke: #bababa; stroke-miterlimit: 10"
+            x="30"
+            y="25"
+            rx="2"
+            width="105"
+            height="10"
+          />
+          <text
+            v-if="finalResults[0].rank > 0"
+            class="payTableText"
+            text-anchor="start"
+            font-weight="bold"
+            font-size="7"
+            x="33"
+            y="32.5"
+            fill="#ffffff"
+          >
+            {{ finalResults[0].label }}
+          </text>
+          <text
+            v-if="finalResults[0].rank === 0"
+            class="payTableText"
+            text-anchor="middle"
+            font-weight="bold"
+            font-size="8"
+            x="82"
+            y="32.5"
+            fill="#ffffff"
+          >
+            {{ finalResults[0].label }}
+          </text>
+          <text
+            v-if="finalResults[0].rank > 0"
+            class="labelCash payTableText"
+            text-anchor="end"
+            font-weight="bold"
+            font-size="7"
+            x="130"
+            y="32.5"
+            fill="#02F53A"
+          >
+            {{ dollarFormat(finalResults[0].reward) }}
+          </text>
+        </svg>
       </div>
     </div>
 
-    <div class="btnHeight" :style="{display: stage.mainCardsDealt && !stage.removeUnheldCards ? 'block': 'none'}">
+    <div
+      class="btnHeight"
+      :style="{ display: stage.newRound || stage.results ? 'block' : 'none' }"
+    >
+      <div v-if="!bonusRound" class="btnBase" v-on:click="deal">
+        <btn-right-deal></btn-right-deal>
+      </div>
+
+ <div v-if="bonusRound" class="btnBase" v-on:click="playBonus">
+        <bonus-btn></bonus-btn>
+      </div>
+
+    </div>
+<!--     <div
+      class="btnHeight"
+      :style="{ display: bonusRound ? 'block' : 'none' }"
+    >
+      <div class="btnBase" v-on:click="playBonus">
+        <bonus-btn></bonus-btn>
+      </div>
+    </div> -->
+
+
+
+
+    <div
+      class="btnHeight"
+      :style="{
+        display:
+          stage.mainCardsDealt && !stage.removeUnheldCards ? 'block' : 'none',
+      }"
+    >
       <div class="btnBase" v-on:click="draw">
         <btn-right-draw></btn-right-draw>
       </div>
-
     </div>
 
-   <div class="changeBG" @click="changeBG()"></div>
+    <div class="changeBG" @click="changeBG()"></div>
 
-<!-- FOR TESTING (start) -->
-      <!--   <button @click="option.autohold = !option.autohold" style="position:absolute; bottom:0%; width: 10rem; font-size:1rem; cursor: pointer;">
-            <span v-if="option.autohold">☑</span>
-            <span v-if="!option.autohold">☐</span>
-            Auto hold
-            <span v-if="!option.autohold"> is OFF</span>
-            <span v-if="option.autohold"> is ON</span>
-          </button>
-          <select v-model="selectedTest" style="position:absolute; bottom:0.5%; left: 10.5rem; width: 10rem;">
-            <option v-for="o in testScenarios" :value="o.cards">{{o.desc}}</option>
-          </select>
-          <div v-if="holdReason !== ''" style="position:absolute; bottom:0.5%; left: 20.5rem; font-size:1rem; cursor: pointer; color: lightyellow; background:  rgba(0, 0, 0, 0.5); padding: 0.5rem; padding-bottom: 0rem; ">
-            <b>Hold reason: </b>
-            {{holdReason}} 
-          </div>
+    <!-- FOR TESTING (start) -->
+    <button
+      @click="option.autohold = !option.autohold"
+      style="
+        position: absolute;
+        bottom: 0%;
+        width: 10rem;
+        font-size: 1rem;
+        cursor: pointer;
+      "
+    >
+      <span v-if="option.autohold">☑</span>
+      <span v-if="!option.autohold">☐</span>
+      Auto hold
+      <span v-if="!option.autohold"> is OFF</span>
+      <span v-if="option.autohold"> is ON</span>
+    </button>
+    <select
+      v-model="selectedTest"
+      style="position: absolute; bottom: 0.5%; left: 10.5rem; width: 10rem"
+    >
+      <option v-for="o in testScenarios" :value="o.cards">{{ o.desc }}</option>
+    </select>
+    <div
+      v-if="holdReason !== ''"
+      style="
+        position: absolute;
+        bottom: 0.5%;
+        left: 20.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+        color: lightyellow;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 0.5rem;
+        padding-bottom: 0rem;
+      "
+    >
+      <b>Hold reason: </b>
+      {{ holdReason }}
+    </div>
 
-          <div style="color: white; position:absolute; bottom:5%; left:10%; width: 50%; font-size:1.5rem; cursor: pointer;" v-if="option.bestSlide !== ''">
-<b>Best slide</b> <br> <span v-if="option.bestSlide === 'left'"><<<</span>  <span v-if="option.bestSlide === 'right'">>>></span>({{option.bestSlide}})</div> -->
-         
-       
+    <div
+      style="
+        color: white;
+        position: absolute;
+        bottom: 5%;
+        left: 10%;
+        width: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+      "
+      v-if="option.bestSlide !== ''"
+    >
+      <b>Best slide</b> <br />
+      <span v-if="option.bestSlide === 'left'"><<<</span>
+      <span v-if="option.bestSlide === 'right'">>>></span>({{
+        option.bestSlide
+      }})
+    </div>
 
+    <!-- FOR TESTING (end) -->
 
-<!-- FOR TESTING (end) -->
+    <transition name="fade">
+      <water-mark v-if="stage.removeUnheldCards === false"></water-mark>
+    </transition>
+    <again v-if="stage.results && !bonusRound" v-on:deal="deal"></again>
+    <flashBonus v-if="stage.results && bonusRound" v-on:playBonus="playBonus"></flashBonus>
 
-
-<transition name="fade">
-          <water-mark v-if="stage.removeUnheldCards === false"></water-mark>
-</transition>
-<again v-if="stage.results"  v-on:deal="deal"></again>
-
-    <div style="display:none;">
+    <div style="display: none">
       <audio id="soundFlip">
-        <source src="/static/sounds/cardFlip.mp3" type="audio/mpeg">
+        <source src="/static/sounds/cardFlip.mp3" type="audio/mpeg" />
       </audio>
       <audio id="soundLabel">
-        <source src="/static/sounds/msmh_wand.mp3" type="audio/mpeg"> Your browser does not support the audio element.
+        <source src="/static/sounds/msmh_wand.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
       </audio>
       <audio id="dSoundDeal">
-        <source src="/static/sounds/cardFlip2.mp3" type="audio/mpeg">
+        <source src="/static/sounds/cardFlip2.mp3" type="audio/mpeg" />
       </audio>
       <audio id="soundClearCards">
-        <source src="/static/sounds/mp_deal.mp3" type="audio/mpeg">
+        <source src="/static/sounds/mp_deal.mp3" type="audio/mpeg" />
       </audio>
       <audio id="playerWins">
-        <source src="/static/sounds/m_multiCashOut.mp3" type="audio/mpeg">
+        <source src="/static/sounds/m_multiCashOut.mp3" type="audio/mpeg" />
       </audio>
       <audio id="soundBtnPress">
-        <source src="/static/sounds/button.ogg" type="audio/ogg">
+        <source src="/static/sounds/button.ogg" type="audio/ogg" />
       </audio>
       <audio id="chipClick">
-        <source src="/static/sounds/chipClick.mp3" type="audio/mpeg">
+        <source src="/static/sounds/chipClick.mp3" type="audio/mpeg" />
       </audio>
       <audio id="endRound">
-        <source src="/static/sounds/playerWins.mp3" type="audio/mpeg">
+        <source src="/static/sounds/playerWins.mp3" type="audio/mpeg" />
       </audio>
 
-      <img src="./assets/cards/AC.svg">
-      <img src="./assets/cards/JC.svg">
-      <img src="./assets/cards/JD.svg">
-      <img src="./assets/cards/JH.svg">
-      <img src="./assets/cards/JS.svg">
-      <img src="./assets/cards/KC.svg">
-      <img src="./assets/cards/KD.svg">
-      <img src="./assets/cards/KH.svg">
-      <img src="./assets/cards/KS.svg">
-      <img src="./assets/cards/QC.svg">
-      <img src="./assets/cards/QD.svg">
-      <img src="./assets/cards/QH.svg">
-      <img src="./assets/cards/QS.svg">
-      <img src="./assets/cards/cardBack2.svg">
-
+      <img src="./assets/cards/AC.svg" />
+      <img src="./assets/cards/JC.svg" />
+      <img src="./assets/cards/JD.svg" />
+      <img src="./assets/cards/JH.svg" />
+      <img src="./assets/cards/JS.svg" />
+      <img src="./assets/cards/KC.svg" />
+      <img src="./assets/cards/KD.svg" />
+      <img src="./assets/cards/KH.svg" />
+      <img src="./assets/cards/KS.svg" />
+      <img src="./assets/cards/QC.svg" />
+      <img src="./assets/cards/QD.svg" />
+      <img src="./assets/cards/QH.svg" />
+      <img src="./assets/cards/QS.svg" />
+      <img src="./assets/cards/cardBack2.svg" />
     </div>
-
   </div>
 </template>
 
@@ -179,6 +390,10 @@ import autoHolder from "./gameLogic/autoHolder";
 import autoSlider from "./gameLogic/autoSlider";
 import tests from "./gameLogic/testCases";
 
+import bonus from "./bonus";
+import flashBonus from "./components/flashBonus.vue";
+import bonusBtn from "./components/bonusBtn.vue";
+
 var finalResults = new handResult();
 var getHolds = new autoHolder();
 var getBestSlide = new autoSlider();
@@ -195,21 +410,24 @@ var dealer = new dealerPerson(),
     "c5Pos",
     "c6RPos",
     "c7RPos",
-    "c8RPos"
+    "c8RPos",
   ],
   cardHolds = cardPos.map((a, i) => {
     return {
       class: a,
       active: false,
-      display: true
+      display: true,
     };
   });
 
 //console.log(dealer.getMultiply());
 
 export default {
+  mixins: [bonus],
   name: "app",
   components: {
+    flashBonus,
+    bonusBtn,
     menuBtns,
     logo,
     waterMark,
@@ -223,19 +441,19 @@ export default {
     info,
     again,
     tapLabels,
-    slideBtns
+    slideBtns,
   },
   data() {
     return {
-      bgImg: "background-image: url('./static/BBGGR1.jpg')",
+      bgImg: "background-image: url('./static/BBGG1.jpg')",
       bgImgs: ["1", "2", "3"],
       currentImg: 2,
       testScenarios: tests,
-      selectedTest: tests[0].cards,
+      selectedTest: tests[2].cards,
       option: {
         autohold: false,
         autoplay: false,
-        bestSlide: ""
+        bestSlide: "",
       },
       infoBoxOpen: false,
       stage: {
@@ -248,11 +466,11 @@ export default {
         multiResults: false,
         showSlideBtns: false,
         animationDone: true,
-        slideChoice: false
+        slideChoice: false,
       },
       slide: {
         left: [false, false, false],
-        right: [false, false, false]
+        right: [false, false, false],
       },
       /*  MDIndex: -1, */
       cash: {
@@ -265,7 +483,7 @@ export default {
         activeCoinOption: 1,
         adjustFactor: 1,
         slideCost: 2,
-        base_coin_cost: 1
+        base_coin_cost: 1,
       },
       holdReason: "",
       defaultClasses: "cSize flip-container",
@@ -303,16 +521,16 @@ export default {
         leftS10: false,
         leftS01: false,
         leftS02: false,
-        leftS03: false
+        leftS03: false,
       },
       slideOptions: {
         right: [3, 2, 1, 0],
-        left: [3, 4, 5, 6]
-      }
+        left: [3, 4, 5, 6],
+      },
     };
   },
   computed: {
-    slideSpecs: function() {
+    slideSpecs: function () {
       var result = {};
       result.lSlide1 = this.slide.left[0];
       result.lSlide2 = this.slide.left[1];
@@ -325,7 +543,7 @@ export default {
         result[slideType] = this.reviewSlides[slideType];
       }
       return result;
-    }
+    },
   },
   methods: {
     reviewCards(n) {
@@ -410,7 +628,7 @@ export default {
       this.playDealSound();
       return {
         lCard: lastCard,
-        fCard: firstCard
+        fCard: firstCard,
       };
     },
     updateActiveHand(i) {
@@ -436,7 +654,7 @@ export default {
       return "$" + x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     getHeldCards() {
-      return this.holds.map(c => {
+      return this.holds.map((c) => {
         return c.active;
       });
     },
@@ -527,6 +745,9 @@ export default {
       this.finalResults[0].reward = this.recordReward(this.finalResults[0]);
       this.stage.singleResult = true;
       this.stage.results = true;
+      this.finalHandIndex.start = 3;
+      this.finalHandIndex.end =8;
+      this.checkForBonus();
       this.analyzeCash();
     },
     slideCards(direction, rounds) {
@@ -646,6 +867,9 @@ export default {
             this.updateActiveHand(i + 1);
             this.playDealSound();
             if (i === rounds - 1) {
+              this.finalHandIndex.start = 2 - i;
+              this.finalHandIndex.end = 7 - i;
+              this.checkForBonus();
               this.stage.results = true;
               setTimeout(() => {
                 this.analyzeCash();
@@ -693,6 +917,9 @@ export default {
             this.playDealSound();
 
             if (i === rounds - 1) {
+              this.finalHandIndex.start = i + 4;
+              this.finalHandIndex.end = i + 9;
+              this.checkForBonus();
               this.stage.results = true;
               setTimeout(() => {
                 this.analyzeCash();
@@ -713,21 +940,20 @@ export default {
     },
     recordReward(d) {
       return (
-        this.cash.coinValue *
-        this.cash.base_coin_cost *
-        d.payout /
+        (this.cash.coinValue * this.cash.base_coin_cost * d.payout) /
         this.cash.adjustFactor
       );
     },
     analyzeCash() {
       this.cash.win = 0;
-      this.finalResults.forEach(d => {
+      this.finalResults.forEach((d) => {
         this.cash.win = this.cash.win + d.reward * d.payMultiply;
       });
 
       this.cash.balance = this.cash.balance + this.cash.win;
 
       bus.$emit("updateCashDisplay", this.cash);
+
     },
     draw() {
       this.stage.removeUnheldCards = true;
@@ -813,75 +1039,75 @@ export default {
       this.soundDeal.pause();
       this.soundDeal.currentTime = 0;
       var nopromise = {
-        catch: new Function()
+        catch: new Function(),
       };
-      (this.soundDeal.play() || nopromise).catch(function() {});
+      (this.soundDeal.play() || nopromise).catch(function () {});
     },
     playCashSound() {
       this.soundCash.pause();
       this.soundCash.currentTime = 0;
       var nopromise = {
-        catch: new Function()
+        catch: new Function(),
       };
-      (this.soundCash.play() || nopromise).catch(function() {});
+      (this.soundCash.play() || nopromise).catch(function () {});
     },
     playFlipSound() {
       this.soundDeal.pause();
       this.soundDeal.currentTime = 0;
       var nopromise = {
-        catch: new Function()
+        catch: new Function(),
       };
-      (this.soundDeal.play() || nopromise).catch(function() {});
+      (this.soundDeal.play() || nopromise).catch(function () {});
     },
     playStarSound() {
       if (this.pDeal) {
         this.soundStar.pause();
         this.soundStar.currentTime = 0;
         var nopromise = {
-          catch: new Function()
+          catch: new Function(),
         };
-        (this.soundStar.play() || nopromise).catch(function() {});
+        (this.soundStar.play() || nopromise).catch(function () {});
       }
     },
     playBtnSound() {
       this.soundBtn.pause();
       this.soundBtn.currentTime = 0;
       var nopromise = {
-        catch: new Function()
+        catch: new Function(),
       };
-      (this.soundBtn.play() || nopromise).catch(function() {});
+      (this.soundBtn.play() || nopromise).catch(function () {});
     },
     playBetsPlease() {
       this.soundBets.pause();
       this.soundBets.currentTime = 0;
       var nopromise = {
-        catch: new Function()
+        catch: new Function(),
       };
-      (this.soundBets.play() || nopromise).catch(function() {});
+      (this.soundBets.play() || nopromise).catch(function () {});
     },
     playChipClick() {
       this.soundChip.pause();
       this.soundChip.currentTime = 0;
       var nopromise = {
-        catch: new Function()
+        catch: new Function(),
       };
-      (this.soundChip.play() || nopromise).catch(function() {});
+      (this.soundChip.play() || nopromise).catch(function () {});
     },
     playWinMsg() {
       this.soundPlayerWins.pause();
       this.soundPlayerWins.currentTime = 0;
       var nopromise = {
-        catch: new Function()
+        catch: new Function(),
       };
-      (this.soundPlayerWins.play() || nopromise).catch(function() {});
+      (this.soundPlayerWins.play() || nopromise).catch(function () {});
     },
     endRound() {
       this.soundEndRound.pause();
       this.soundEndRound.currentTime = 0;
       var nopromise = {
-        catch: new Function()
+        catch: new Function(),
       };
-      (this.soundEndRound.play() || nopromise).catch(function() {});
+      (this.soundEndRound.play() || nopromise).catch(function () {});
     },
     cycleBgImg() {
       setInterval(() => {
@@ -895,10 +1121,10 @@ export default {
         this.currentImg++;
       }
       this.bgImg =
-        "background-image: url('./static/BBGGR" +
+        "background-image: url('./static/BBGG" +
         this.bgImgs[this.currentImg] +
         ".jpg')";
-    }
+    },
   },
   mounted() {
     this.soundFlip = document.getElementById("soundFlip");
@@ -914,7 +1140,7 @@ export default {
     this.soundPlayerWins.volume = 0.5;
     this.soundEndRound = document.getElementById("soundLabel");
     this.cycleBgImg();
-  }
+  },
 };
 </script>
 
@@ -934,7 +1160,7 @@ body {
   width: 100%;
   overflow: hidden;
 
-  background: #910301;
+  background: #0000a0;
 }
 
 .fullScreen,
@@ -945,8 +1171,10 @@ body {
   background-size: 100% 100%;
   background-repeat: no-repeat;
 
-  background-color: #910301;
+  background-color: #0000a0;
 }
+
+/*  background-color: #910301; */
 
 .fade-enter-active,
 .fade-leave-active {

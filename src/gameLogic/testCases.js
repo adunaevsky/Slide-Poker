@@ -1,5 +1,8 @@
 var tests = [
     { cards: [], desc: "random cards" },
+    { cards: ["C12","C14","C11","C3","H3"], desc: "Almost Royal 1" },
+    { cards: ["C5","H5","H10","H14","H13"], desc: "Almost Royal 2" },
+    { cards: ["C5","D12","D13","D11","H3"], desc: "Almost Royal 3" },
     { cards: ["C5","H5","D3","C3","H3"], desc: "full house slide A" },
     { cards: ["C5","H5","D5","C13","H13"], desc: "full house slide B" },
     { cards: ["C5","H5","D14","C14","H3"], desc: "2 pairs slide A1: lCard lCard ace ace _ " },
