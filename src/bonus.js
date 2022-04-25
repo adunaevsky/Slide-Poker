@@ -27,14 +27,28 @@ var bonus = {
             console.log(bonusAnalysis);
             this.missingCardsForRoyal = bonusAnalysis.missingCardsForRoyal;
             this.stage.startBonus = bonusAnalysis.isBonus;
-            
+
             this.stage.bonusDone = false;
             this.nonBonusIndexes = bonusAnalysis.removeCardIndex;
 
         },
         getBonusResults() {
-            var test = finalResults.fiveCards(this.mCards.slice(this.finalHandIndex.start, this.finalHandIndex.end));
-            console.log(test)
+            var checkFinal = finalResults.fiveCards(this.mCards.slice(this.finalHandIndex.start, this.finalHandIndex.end));
+
+            this.finalResults = [];
+
+            if (checkFinal.rank === 1) {
+
+                checkFinal.reward = this.recordReward(checkFinal);
+
+                this.finalResults = [checkFinal];
+                console.log(this.finalResults);
+
+
+
+            }
+
+            this.analyzeCash();
             this.stage.startBonus = false;
             this.stage.bonusDone = true;
             this.stage.results = true;

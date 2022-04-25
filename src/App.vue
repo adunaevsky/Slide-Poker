@@ -162,7 +162,7 @@
       v-on:slideLeft="slideChoice('left')"
     />
 
-    <div id="singleResult" class="singleResult" v-if="stage.singleResult">
+    <div id="singleResult" class="singleResult" v-if="stage.singleResult || stage.bonusDone">
       <div style="position: absolute; left: 14.8%; width: 60%">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 60">
           <rect
@@ -963,6 +963,7 @@ export default {
     analyzeCash() {
       this.cash.win = 0;
       this.finalResults.forEach((d) => {
+        console.log(d)
         this.cash.win = this.cash.win + d.reward * d.payMultiply;
       });
 
@@ -996,7 +997,10 @@ export default {
       this.stage.multiResults = false;
       this.stage.cardSwapComplete = false;
       this.stage.results = false;
+      this.stage.startBonus = false;
+      this.stage.bonusDone = false;
       this.holdReason = "";
+
 
       setTimeout(() => {
         for (var s = 0; s < this.slide.left.length; s++) {
