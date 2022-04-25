@@ -1,5 +1,5 @@
 <template>
-    <svg class="lblBase lblSizeSmall rFillDeal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 175.4 290">
+    <svg class="lblBase lblSizeSmall bonsuFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 175.4 290">
         <rect class="sideBtn" style="stroke: #fff; stroke-width: 6; opacity: 1" x="10" y="10" width="800.4" height="170" rx="85" ry="85" />
         <text class="sideBtn" style=" opacity: 0.8; fill:red;" text-anchor="middle" font-weight="bold" font-size="40" x="90" y="85">
             PLAY
@@ -26,7 +26,7 @@ export default {
 </script>
 
 <style>
-.rFillEffect {
+/* .rFillEffect {
     fill: rgb(1, 11, 68)
 }
 
@@ -36,17 +36,17 @@ export default {
 
 .rFillEffect:active {
     fill: rgb(0, 2, 17)
-}
+} */
 
-.rFillDeal {
+.bonsuFill {
     fill: rgb(228,235,25)
 }
 
-.rFillDeal:hover {
+.bonsuFill:hover {
     fill: rgb(228,235,25)
 }
 
-.rFillDeal:active {
+.bonsuFill:active {
     fill: rgb(228,235,25)
 }
 

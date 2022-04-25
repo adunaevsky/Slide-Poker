@@ -1,5 +1,10 @@
 import bonusLogic from './gameLogic/bonusLogic';
-import dealer from './gameLogic/dealer';
+
+
+import handResult from "./gameLogic/handResult";
+
+var finalResults = new handResult();
+
 var bonus = {
     data() {
         return {
@@ -19,10 +24,16 @@ var bonus = {
             var test = this.mCards.slice(this.finalHandIndex.start, this.finalHandIndex.end);
             var bonusAnalysis = bonusLogic.fiveCards(test);
             console.log(bonusAnalysis);
-            this.bonusRound = bonusAnalysis.isBonus;
+            this.stage.startBonus = bonusAnalysis.isBonus;
             this.nonBonusIndexes = bonusAnalysis.removeCardIndex;
 
         },
+        getBonusResults() {
+            var test = finalResults.fiveCards(this.mCards.slice(this.finalHandIndex.start, this.finalHandIndex.end));
+            console.log(test)
+            this.stage.startBonus = false;
+            this.stage.results = true;
+        }
     }
 
 }

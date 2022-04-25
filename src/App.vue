@@ -218,11 +218,11 @@
       class="btnHeight"
       :style="{ display: stage.newRound || stage.results ? 'block' : 'none' }"
     >
-      <div v-if="!bonusRound" class="btnBase" v-on:click="deal">
+      <div v-if="!stage.startBonus" class="btnBase" v-on:click="deal">
         <btn-right-deal></btn-right-deal>
       </div>
 
-      <div v-if="bonusRound" class="btnBase" v-on:click="playBonus">
+      <div v-if="stage.startBonus" class="btnBase" v-on:click="playBonus">
         <bonus-btn></bonus-btn>
       </div>
     </div>
@@ -464,6 +464,7 @@ export default {
         showSlideBtns: false,
         animationDone: true,
         slideChoice: false,
+        startBonus: false,
       },
       slide: {
         left: [false, false, false],
@@ -1123,8 +1124,8 @@ export default {
     },
 
     playBonus() {
-      console.log("start bonus!");
-
+      this.stage.results = false;
+      this.stage.singleResult = false;
       this.nonBonusIndexes.forEach((i, index) => {
         setTimeout(() => {
           this.showMainCard.splice(i + this.finalHandIndex.start, 1, false);
@@ -1145,6 +1146,9 @@ export default {
           this.showMainCard.splice(i + this.finalHandIndex.start, 1, true);
           this.playDealSound();
           bus.$emit("cardsUpdated");
+          if (index == this.nonBonusIndexes.length - 1) {
+            this.getBonusResults();
+          }
         }, 200 * index);
       });
     },
