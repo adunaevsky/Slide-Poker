@@ -2,11 +2,14 @@
 
       <svg class="waterMark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
 
-            <text text-anchor="middle" font-weight="bold" font-size="7" x="50" y="6" fill="#FFFFFF" :opacity="opacity">
-                SLIDE BONUS WITH
+
+
+
+            <text text-anchor="middle" font-weight="bold" font-size="7" x="50" y="6" fill="#e4eb19" :opacity="0.4">
+                 BONUS ROYAL FLASH 
                 </text>
-            <text text-anchor="middle" font-weight="bold" font-size="7" x="50" y="13" fill="#FFFFFF" :opacity="opacity">
-                ANY ADJACENT PAIRS
+            <text text-anchor="middle" font-weight="bold" font-size="4.5" x="50" y="13" fill="#FFFFFF" :opacity="opacity">
+               SLIDE BONUS WITH ANY ADJACENT PAIRS
                 </text>
             <text text-anchor="end" font-weight="bold" font-size="6.3" x="43" y="30" fill="#FFFFFF" :opacity="opacity">
                 EPIC RETURN</text>

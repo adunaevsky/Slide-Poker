@@ -24,7 +24,6 @@ var bonus = {
 
             var test = this.mCards.slice(this.finalHandIndex.start, this.finalHandIndex.end);
             var bonusAnalysis = bonusLogic.fiveCards(test);
-            console.log(bonusAnalysis);
             this.missingCardsForRoyal = bonusAnalysis.missingCardsForRoyal;
             this.stage.startBonus = bonusAnalysis.isBonus;
 
@@ -40,9 +39,10 @@ var bonus = {
             if (checkFinal.rank === 1) {
                // checkFinal.label = "BONUS Royal Flush!";
                 checkFinal.reward = this.recordReward(checkFinal);
+                checkFinal.payMultiply = 1;
 
                 this.finalResults = [checkFinal];
-                console.log(this.finalResults);
+              //  console.log(this.finalResults);
 
 
 

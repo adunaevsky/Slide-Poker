@@ -22,14 +22,17 @@ class dealerPerson {
         //  console.log( this.mainCards);
 
         if (typeof testCase === 'object' && cardTypes === 'mainCards' && testCase.length > 0) {
-
             this.mainCards[cardNum] = testCase[cardNum - 3];
-
             var cardInDeck = this.deck.indexOf(this.mainCards[cardNum]);
             this.deck.splice(cardInDeck, 1);
 
             //  console.log(cardInDeck, this.deck.length, this.mainCards, testCase, cardNum - 3, cardNum);
 
+        } else if (typeof testCase === 'object' && cardTypes === 'slideCard' && testCase.length > 0) {
+            this.mainCards[cardNum] = testCase[cardNum];
+
+            var cardInDeck = this.deck.indexOf(this.mainCards[cardNum]);
+            this.deck.splice(cardInDeck, 1);
         } else {
             var cardsInDeck = this.deck.length;
             this.mainCards[cardNum] = this.deck[cardsInDeck - 1];
@@ -75,13 +78,13 @@ class dealerPerson {
         if (preset) {
 
             this.mainCards[cardNum] = preset;
-         } else { 
+        } else {
 
             this.mainCards[cardNum] = this.deck[this.deck.length - 1];
             this.deck.pop();
 
         }
-       
+
     }
 
     newDeck() {

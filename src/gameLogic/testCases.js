@@ -126,5 +126,19 @@ var tests = [
     { cards: ['S6', 'H3', 'S5', 'C2', 'H11'], desc: "One high card B" }
 
 ]
-export { tests as default }
+var presetSlides = [
+    { cards: [], desc: "random" },
+
+    { cards: ["C12","C14","C11","","","","","","C12","C14","C11"], desc: "3 Royal Clubs" },
+    { cards: ["H12","H14","H11","","","","","","H12","H14","H11"], desc: "3 Royal Hearts" },
+    { cards: ["S12","S14","S11","","","","","","S12","S14","S11"], desc: "3 Royal Spades" },
+    { cards: ["D12","D14","D11","","","","","","D12","D14","D11"], desc: "3 Royal Diamonds" },
+   
+
+];
+var final = {
+    test:tests,
+    presetSlides:presetSlides
+}
+export { final as default }
 

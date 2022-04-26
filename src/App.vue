@@ -71,7 +71,7 @@
       v-for="(r, index) in finalResults"
       :class="topShiftClass[index]"
     >
-      <div v-if="stage.multiResults" style="position: absolute" class="label">
+      <div v-if="stage.multiResults && !stage.bonusDone" style="position: absolute" class="label">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 110 12"
@@ -282,12 +282,23 @@
       <span v-if="!option.autohold"> is OFF</span>
       <span v-if="option.autohold"> is ON</span>
     </button> -->
+    <label for="" style="position: absolute; bottom: 0.5%; left: 10.5rem; width: 10rem">Draw</label>
     <select
       v-model="selectedTest"
-      style="position: absolute; bottom: 0.5%; left: 10.5rem; width: 10rem"
+      style="position: absolute; bottom: 0.5%; left: 13.5rem; width: 10rem"
     >
       <option v-for="o in testScenarios" :value="o.cards">{{ o.desc }}</option>
     </select>
+
+<label for="" style="position: absolute; bottom: 0.5%; left: 25.5rem; width: 10rem">Slide</label>
+    <select
+      v-model="selectedSlide"
+      style="position: absolute; bottom: 0.5%; left: 28.5rem; width: 10rem"
+    >  <option v-for="o in slideScenarios" :value="o.cards">{{ o.desc }}</option>
+   
+    </select>
+
+
     <div
       v-if="holdReason !== ''"
       style="
@@ -302,6 +313,9 @@
         padding-bottom: 0rem;
       "
     >
+
+
+
       <b>Hold reason: </b>
       {{ holdReason }}
     </div>
@@ -461,8 +475,10 @@ export default {
       bgImg: "background-image: url('./static/BBGG1.jpg')",
       bgImgs: ["1", "2", "3"],
       currentImg: 2,
-      testScenarios: tests,
-      selectedTest: tests[2].cards,
+      testScenarios: tests.test,
+      slideScenarios: tests.presetSlides,
+      selectedTest: tests.test[5].cards,
+      selectedSlide: tests.presetSlides[1].cards,
       option: {
         autohold: false,
         autoplay: false,
@@ -867,7 +883,7 @@ export default {
           }, 1500);
 
           setTimeout(() => {
-            dealer.getCard(2 - i, []);
+            dealer.getCard(2 - i, this.selectedSlide, 'slideCard');
             bus.$emit("cardsUpdated");
             this.mainFlip.splice(2 - i, 1, true);
 
@@ -916,7 +932,7 @@ export default {
           }, 1500);
 
           setTimeout(() => {
-            dealer.getCard(8 + i, []);
+            dealer.getCard(8 + i, this.selectedSlide, 'slideCard');
             bus.$emit("cardsUpdated");
             this.mainFlip.splice(8 + i, 1, true);
 
@@ -963,7 +979,7 @@ export default {
     analyzeCash() {
       this.cash.win = 0;
       this.finalResults.forEach((d) => {
-        console.log(d)
+      //  console.log(d)
         this.cash.win = this.cash.win + d.reward * d.payMultiply;
       });
 
@@ -1022,6 +1038,7 @@ export default {
         if (i <= a.length - 1) {
           if (this.mCards[c] === "") {
             dealer.getCard(c, this.selectedTest, "mainCards");
+         /*    console.log(this.mCards) */
             bus.$emit("cardsUpdated");
           }
           setTimeout(() => {
@@ -1148,6 +1165,14 @@ export default {
     playBonus() {
       this.stage.results = false;
       this.stage.singleResult = false;
+
+    for (var i = 0; i < 11; i++) {
+        this.holds[i].active = false;
+        this.holds[i].display = true;
+      }
+
+
+
       this.nonBonusIndexes.forEach((i, index) => {
         setTimeout(() => {
           this.showMainCard.splice(i + this.finalHandIndex.start, 1, false);
