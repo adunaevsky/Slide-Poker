@@ -6,7 +6,7 @@
 
 
             <text text-anchor="middle" font-weight="bold" font-size="7" x="50" y="6" fill="#e4eb19" :opacity="0.4">
-                 BONUS ROYAL FLASH 
+                 BONUS ROYAL FLUSH 
                 </text>
             <text text-anchor="middle" font-weight="bold" font-size="4.5" x="50" y="13" fill="#FFFFFF" :opacity="opacity">
                SLIDE BONUS WITH ANY ADJACENT PAIRS
