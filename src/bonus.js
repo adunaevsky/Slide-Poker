@@ -35,6 +35,10 @@ var bonus = {
             var checkFinal = finalResults.fiveCards(this.mCards.slice(this.finalHandIndex.start, this.finalHandIndex.end));
 
             this.finalResults = [];
+            this.finalResults.forEach(()=>{
+                checkFinal.payMultiply = 0;
+                checkFinal.rank = undefined;
+            });
 
             if (checkFinal.rank === 1) {
                // checkFinal.label = "BONUS Royal Flush!";
@@ -43,9 +47,6 @@ var bonus = {
 
                 this.finalResults = [checkFinal];
               //  console.log(this.finalResults);
-
-
-
             }
 
             this.analyzeCash();
