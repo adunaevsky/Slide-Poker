@@ -162,7 +162,7 @@
       v-on:slideLeft="slideChoice('left')"
     />
 
-    <div id="singleResult" class="singleResult" v-if="stage.singleResult || stage.bonusDone">
+    <div id="singleResult" class="singleResult" v-if="stage.singleResult || (stage.bonusDone && finalResults.length > 0)">
       <div style="position: absolute; left: 14.8%; width: 60%">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 60">
           <rect
