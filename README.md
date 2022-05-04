@@ -1,4 +1,4 @@
-# slidingpoker
+# Slide Poker Demo Game
 
 > A Vue.js project
 
