@@ -1,4 +1,7 @@
-# slidingpoker
+# Slide Poker Demo Game
+
+## Play the demo game
+https://www.realizegamingllc.com/game-demos/slide-poker-demo/ 
 
 > A Vue.js project
 
