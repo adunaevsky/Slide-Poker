@@ -48,7 +48,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/dev/bonusSlidePoker',
+    assetsPublicPath: '/dev/bonusSlidePokerV5',
 
     /**
      * Source Maps

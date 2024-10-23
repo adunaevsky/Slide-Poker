@@ -29,11 +29,11 @@ var tableValues = [{
 }, {
     text: 'Full House',
     clr: '#24A400',
-    reward: 9
+    reward: 8
 }, {
     text: 'Flush',
     clr: '#33A38A',
-    reward: 6
+    reward: 5
 }, {
     text: 'Straight',
     clr: '#556FF9',

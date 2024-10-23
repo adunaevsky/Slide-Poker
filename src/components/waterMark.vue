@@ -15,11 +15,11 @@
                 EPIC RETURN</text>
            <!--  <text text-anchor="end" font-weight="bold" font-size="6.3" x="43" y="30" fill="#FFFFFF" :opacity="opacity">
                 MEGA WIN</text> -->
-            <text text-anchor="end" font-weight="bold" font-size="6.3" x="43" y="48" fill="#FFFFFF" :opacity="opacity">
-                HUGE WIN</text>
+          <!--   <text text-anchor="end" font-weight="bold" font-size="6.3" x="43" y="48" fill="#FFFFFF" :opacity="opacity">
+                HUGE WIN</text> -->
 
                 <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="30" fill="#FFFFFF" :opacity="opacity">
-                98.73%</text>
+                97%</text>
 
                 <!-- <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="30" fill="#FFFFFF" :opacity="opacity">
                 +5</text> -->
@@ -27,11 +27,11 @@
                 <!--  <text text-anchor="start" font-weight="bold" font-size="4.5" x="67" y="30" fill="#FFFFFF" :opacity="opacity">
                 EXTRA CARDS</text> -->
 
-                <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="48" fill="#FFFFFF" :opacity="opacity">
+               <!--  <text text-anchor="start" font-weight="bold" font-size="14" x="48" y="48" fill="#FFFFFF" :opacity="opacity">
                 x10</text>
 
                  <text text-anchor="start" font-weight="bold" font-size="4.5" x="72.5" y="48" fill="#FFFFFF" :opacity="opacity">
-                MULTIPLIER</text>
+                MULTIPLIER</text> -->
             
 
         </svg>

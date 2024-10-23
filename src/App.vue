@@ -477,13 +477,13 @@ export default {
       currentImg: 2,
       testScenarios: tests.test,
       slideScenarios: tests.presetSlides,
-      selectedTest: tests.test[5].cards,
-      selectedSlide: tests.presetSlides[1].cards,
+      selectedTest: tests.test[0].cards,
+      selectedSlide: tests.presetSlides[0].cards,
       option: {
         autohold: false,
         autoplay: false,
         bestSlide: "", 
-        winBonus: true
+        winBonus: false
       },
       infoBoxOpen: false,
       stage: {
@@ -514,7 +514,7 @@ export default {
         coinOptions: [1, 5, 10, 25, 50, 100, 200],
         activeCoinOption: 1,
         adjustFactor: 1,
-        slideCost: 2,
+        slideCost: 1,
         base_coin_cost: 1,
       },
       holdReason: "",
@@ -708,7 +708,7 @@ export default {
 
       this.cash.totalBet =
         this.cash.coinValue * (this.cash.base_coin_cost + this.cash.slideCost);
-
+        
       this.cash.balance = this.cash.balance - this.cash.totalBet;
 
       for (let i = 0; i < 5; i++) {
@@ -773,6 +773,7 @@ export default {
       this.stage.cardSwapComplete = true;
     },
     noSlide() {
+     // console.log('no slide!');
       this.finalResults.push(finalResults.fiveCards(this.mCards.slice(3, 8)));
       this.finalResults[0].reward = this.recordReward(this.finalResults[0]);
       this.stage.singleResult = true;
@@ -783,6 +784,7 @@ export default {
       this.analyzeCash();
     },
     slideCards(direction, rounds) {
+    //  console.log(direction, rounds);
       this.originalSlide = direction;
       if (direction === "right") {
         this.slideRight(rounds);
@@ -796,37 +798,40 @@ export default {
 
       //   FOR PRODUCTION
       var cardValues = [];
+      let allHolds = this.getHeldCards(), cardsHeld = [];
       _.forEach(this.mCards, (a, i) => {
         if (i > 2 && i <= 7) {
           cardValues.push(parseInt(a.slice(1, a.length)));
+          cardsHeld.push(allHolds[i]);
         }
       });
+    //  console.log(cardValues, cardsHeld);
       setTimeout(() => {
         if (
+          (cardValues[0] === cardValues[1] && 
+            cardValues[3] === cardValues[4] && cardsHeld[0] && cardsHeld[1] && cardsHeld[3] && cardsHeld[4]) /* || // xx_xx
           (cardValues[0] === cardValues[1] &&
-            cardValues[3] === cardValues[4]) ||
-          (cardValues[0] === cardValues[1] &&
-            cardValues[2] === cardValues[3]) ||
+            cardValues[2] === cardValues[3]) || //xxxx_
           (cardValues[1] === cardValues[2] &&
-            cardValues[3] === cardValues[4]) ||
+            cardValues[3] === cardValues[4])  */|| //_xxxx
           (cardValues[1] === cardValues[2] &&
-            cardValues[3] === cardValues[2]) ||
+            cardValues[3] === cardValues[2] && cardsHeld[1] && cardsHeld[2] && cardsHeld[3]) /* || //_xxx_
           (cardValues[1] === cardValues[2] &&
-            cardValues[2] === cardValues[4]) ||
-          (cardValues[0] === cardValues[2] && cardValues[3] === cardValues[2])
+            cardValues[2] === cardValues[4]) || //_xx_x
+          (cardValues[0] === cardValues[2] && cardValues[3] === cardValues[2]) //x_xx_ */
         ) {
           this.stage.slideChoice = true;
 
           if (this.option.autohold) {
             this.option.bestSlide = getBestSlide.analyze(cardValues);
           }
-        } else if (cardValues[0] === cardValues[1]) {
+        } else if (cardValues[0] === cardValues[1] && cardsHeld[0] && cardsHeld[1] && !cardsHeld[2]) {
           this.slideCards("right", 3);
-        } else if (cardValues[3] === cardValues[4]) {
+        } else if (cardValues[3] === cardValues[4] && cardsHeld[3] && cardsHeld[4] && !cardsHeld[2]) {
           this.slideCards("left", 3);
-        } else if (cardValues[1] === cardValues[2]) {
+        } else if (cardValues[1] === cardValues[2] && cardsHeld[1] && cardsHeld[2]) {
           this.slideCards("right", 2);
-        } else if (cardValues[2] === cardValues[3]) {
+        } else if (cardValues[2] === cardValues[3] && cardsHeld[2] && cardsHeld[3]) {
           this.slideCards("left", 2);
         } else {
           this.noSlide();
@@ -837,27 +842,29 @@ export default {
       this.stage.slideChoice = false;
 
       var cardValues = [];
+      let allHolds = this.getHeldCards(), cardsHeld = [];
       _.forEach(this.mCards, (a, i) => {
         if (i > 2 && i <= 7) {
           cardValues.push(parseInt(a.slice(1, a.length)));
+          cardsHeld.push(allHolds[i]);
         }
       });
 
       if (direction === "left") {
-        if (cardValues[3] === cardValues[4]) {
+        if (cardValues[3] === cardValues[4]  && cardsHeld[3] && cardsHeld[4] && !cardsHeld[2]) {
           this.slideCards("left", 3);
-        } else if (cardValues[2] === cardValues[3]) {
+        } else if (cardValues[2] === cardValues[3] && cardsHeld[2] && cardsHeld[3]) {
           this.slideCards("left", 2);
-        } else if (cardValues[2] === cardValues[1]) {
+        } else if (cardValues[2] === cardValues[1] && cardsHeld[1] && cardsHeld[2]) {
           this.slideCards("left", 1);
         }
       }
       if (direction === "right") {
-        if (cardValues[0] === cardValues[1]) {
+        if (cardValues[0] === cardValues[1] && cardsHeld[0] && cardsHeld[1] && !cardsHeld[2]) {
           this.slideCards("right", 3);
-        } else if (cardValues[1] === cardValues[2]) {
+        } else if (cardValues[1] === cardValues[2] && cardsHeld[1] && cardsHeld[2]) {
           this.slideCards("right", 2);
-        } else if (cardValues[2] === cardValues[3]) {
+        } else if (cardValues[2] === cardValues[3] && cardsHeld[2] && cardsHeld[3]) {
           this.slideCards("right", 1);
         }
       }
@@ -979,10 +986,10 @@ export default {
     analyzeCash() {
       this.cash.win = 0;
       this.finalResults.forEach((d) => {
-      //  console.log(d)
+       // console.log(d.reward, d.payMultiply)
         this.cash.win = this.cash.win + d.reward * d.payMultiply;
       });
-
+//console.log('analyzeCash',  this.cash.win)
       this.cash.balance = this.cash.balance + this.cash.win;
 
       bus.$emit("updateCashDisplay", this.cash);

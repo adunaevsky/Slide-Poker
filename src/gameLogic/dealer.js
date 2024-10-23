@@ -11,11 +11,11 @@ class dealerPerson {
     multiplyPayChances = {};
 
     muplitplyParams = [{ limit: 500, value: 1 },
-    { limit: 850, value: 2 },
+/*     { limit: 850, value: 2 },
     { limit: 990, value: 3 },
     { limit: 996, value: 5 },
     { limit: 999, value: 8 },
-    { limit: 1000, value: 10 }
+    { limit: 1000, value: 10 } */
     ];
 
     getCard(cardNum, testCase, cardTypes) {
@@ -71,7 +71,8 @@ class dealerPerson {
     }
 
     getMultiply() {
-        return this.multiplyPayChances[Math.floor(Math.random() * 1000) + 1];
+        return 1;
+       // return this.multiplyPayChances[Math.floor(Math.random() * 1000) + 1];
     }
 
     swapCard(cardNum, preset) {
